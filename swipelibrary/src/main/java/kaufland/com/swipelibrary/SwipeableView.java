@@ -9,7 +9,7 @@ import android.graphics.RectF;
 
 public interface SwipeableView {
 
-    void moveView(float offset);
+    void moveView(float offset, SurfaceView view);
 
     void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation);
     void moveToInitial();

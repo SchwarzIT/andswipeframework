@@ -68,9 +68,14 @@ class DragView extends LinearLayout implements SwipeableView {
     }
 
     @Override
-    public void moveView(float offset) {
-        int distance = (int) calculatePadding(offset);
-        setTranslationX(distance);
+    public void moveView(float offset, SurfaceView view) {
+        //int distance = (int) calculatePadding(offset);
+        if(mViewPosition == LEFT_DRAG_VIEW){
+            setX(view.getLeft() - getWidth());
+        }else if(mViewPosition == RIGHT_DRAG_VIEW){
+            setX(view.getRight());
+        }
+
     }
 
     @Override
@@ -120,8 +125,8 @@ class DragView extends LinearLayout implements SwipeableView {
 
     @Override
     public void moveToInitial() {
-        setTranslationX(mInitialXPos);
-        setTranslationY(mInitialYPos);
+        setX(mInitialXPos);
+        setY(mInitialYPos);
     }
 
 
@@ -134,7 +139,7 @@ class DragView extends LinearLayout implements SwipeableView {
                 if (mViewPosition == LEFT_DRAG_VIEW) {
                     view.setSurfaceViewOffsetX(getDragDistance());
                     view.setSurfaceViewOffsetY(0);
-                    moveView(getDragDistance());
+                    moveView(getDragDistance(), view);
                 }
 
                 if (mViewPosition == RIGHT_DRAG_VIEW) {
@@ -146,7 +151,7 @@ class DragView extends LinearLayout implements SwipeableView {
                 if (mViewPosition == RIGHT_DRAG_VIEW) {
                     view.setSurfaceViewOffsetX(-getDragDistance());
                     view.setSurfaceViewOffsetY(0);
-                    moveView(getDragDistance());
+                    moveView(getDragDistance(), view);
                 }
 
                 if (mViewPosition == LEFT_DRAG_VIEW) {

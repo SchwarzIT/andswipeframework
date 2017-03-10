@@ -3,7 +3,7 @@
        xmlns:app="http://schemas.android.com/apk/res-auto">
     <kaufland.com.swipelibrary.SwipeLayout_
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:weightSum="1"
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
@@ -17,7 +17,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Left Swipe"/>
         </kaufland.com.swipelibrary.DragView_>
@@ -37,7 +37,7 @@
         </kaufland.com.swipelibrary.SurfaceView_>
 
         <kaufland.com.swipelibrary.DragView_
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_weight="0.33"
             app:position="RIGHT_DRAG_VIEW"
             android:background="@android:color/darker_gray"

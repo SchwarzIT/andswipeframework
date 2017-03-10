@@ -363,11 +363,10 @@ public class SwipeLayout extends FrameLayout {
 
                 final int settleDestX = SwipeUtil.determineSwipeHorizontalState(xvel, mSwipeState, mDragRange, mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW), mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW));
 
-                Log.e("test", mSwipeState.getState().name());
+
                 if (mDragHelper.settleCapturedViewAt(settleDestX, 0)) {
                     ViewCompat.postInvalidateOnAnimation(parent);
                 }
-
 
                 mShouldSettle = true;
                 mSwipeSettlingPoint = settleDestX;

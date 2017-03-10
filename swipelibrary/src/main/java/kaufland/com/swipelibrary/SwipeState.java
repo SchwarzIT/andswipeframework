@@ -1,5 +1,7 @@
 package kaufland.com.swipelibrary;
 
+import android.util.Log;
+
 import org.androidannotations.annotations.EBean;
 
 @EBean
@@ -28,7 +30,9 @@ public class SwipeState {
     }
 
     public void setState(DragViewState mState) {
+
         this.mState = mState;
+        Log.e("test", mState.name());
     }
 
     public boolean isSettled() {

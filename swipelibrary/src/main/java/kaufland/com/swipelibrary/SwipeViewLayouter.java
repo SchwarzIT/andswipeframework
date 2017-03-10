@@ -99,7 +99,7 @@ public class SwipeViewLayouter {
         for (DragView view: mDragViews.values()) {
             if(mDragDirection == DragDirection.HORIZONTAL){
                 if(view.getViewPosition() == LEFT_DRAG_VIEW || view.getViewPosition() == RIGHT_DRAG_VIEW){
-                    view.moveView(positionChanges);
+                    view.moveView(positionChanges, mSurfaceView);
                 }
             }
         }
