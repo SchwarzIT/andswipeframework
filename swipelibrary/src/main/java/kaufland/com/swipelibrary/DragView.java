@@ -2,7 +2,9 @@ package kaufland.com.swipelibrary;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -36,16 +38,33 @@ class DragView extends LinearLayout implements SwipeableView {
 
     private boolean mIsInitialized;
 
+    private int mInitialXPos;
+
+    private int mInitialYPos;
+
     DragView(Context context) {
         super(context);
+
     }
 
     DragView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.DragView, 0, 0);
+        try{
+            mViewPosition = typedArray.getInt(R.styleable.DragView_position, 0);
+        } finally {
+            typedArray.recycle();
+        }
     }
 
     DragView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.DragView, 0, 0);
+        try{
+            mViewPosition = typedArray.getInt(R.styleable.DragView_position, 0);
+        } finally {
+            typedArray.recycle();
+        }
     }
 
     @Override
@@ -55,22 +74,26 @@ class DragView extends LinearLayout implements SwipeableView {
     }
 
     @Override
-    public void moveToInitial() {
+    public void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation) {
         switch (mViewPosition) {
             case LEFT_DRAG_VIEW:
                 mDragDistance = getRight();
-                setTranslationX(-mDragDistance);
+                mInitialXPos = surfaceRect.left - getWidth();
+                mInitialYPos = surfaceRect.top;
                 mIsInitialized = true;
                 checkChildrenDistance();
+                moveToInitial();
                 break;
 
             case RIGHT_DRAG_VIEW:
                 mDragDistance = getWidth();
                 mUpperBound = getRight();
                 mLowerBound = getLeft();
-                setTranslationX(mDragDistance);
+                mInitialXPos = surfaceRect.right + getWidth();
+                mInitialYPos = surfaceRect.top;
                 mIsInitialized = true;
                 checkChildrenDistance();
+                moveToInitial();
                 break;
 
             case TOP_DRAG_VIEW:
@@ -78,6 +101,7 @@ class DragView extends LinearLayout implements SwipeableView {
                 setTranslationY(-mDragDistance);
                 mIsInitialized = true;
                 checkChildrenDistance();
+                moveToInitial();
                 break;
 
             case BOTTOM_DRAG_VIEW:
@@ -85,12 +109,22 @@ class DragView extends LinearLayout implements SwipeableView {
                 setTranslationY(mDragDistance);
                 mIsInitialized = true;
                 checkChildrenDistance();
+                moveToInitial();
                 break;
 
             default:
                 mIsInitialized = false;
         }
+
     }
+
+    @Override
+    public void moveToInitial() {
+        setTranslationX(mInitialXPos);
+        setTranslationY(mInitialYPos);
+    }
+
+
 
     @Override
     public void restoreState(SwipeState.DragViewState state, SurfaceView view) {
@@ -247,9 +281,5 @@ class DragView extends LinearLayout implements SwipeableView {
 
     public int getViewPosition() {
         return mViewPosition;
-    }
-
-    public void setViewPosition(int viewPosition) {
-        mViewPosition = viewPosition;
     }
 }

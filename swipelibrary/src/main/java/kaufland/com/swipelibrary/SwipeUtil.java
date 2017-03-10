@@ -2,7 +2,7 @@ package kaufland.com.swipelibrary;
 
 import android.view.View;
 
-import static android.widget.LinearLayout.HORIZONTAL;
+import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
 import static kaufland.com.swipelibrary.SwipeLayout.LEFT_DRAG_VIEW;
 import static kaufland.com.swipelibrary.SwipeLayout.LEFT_FULL_AUTO_OPEN_TRESHOLD;
 import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_DRAG_VIEW;
@@ -42,14 +42,14 @@ public class SwipeUtil {
                 }
 
                 swipeState.setState(SwipeState.DragViewState.LEFT_OPEN);
-                return velocity > LEFT_FULL_AUTO_OPEN_TRESHOLD ? range.getHorizontalRange() : leftDragView.getIntermmediateDistance();
+                return velocity > LEFT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(range.getDifx()) > (rightDragView.getDragDistance() / 2) ? range.getHorizontalRange() : leftDragView.getIntermmediateDistance();
             }
             else if(swipeDirection == SWIPE_DIRECTION_LEFT){
                 if(!rightDragView.isDraggable()){
                     return settleX;
                 }
 
-                settleX = velocity < RIGHT_FULL_AUTO_OPEN_TRESHOLD ? -range.getHorizontalRange() : -rightDragView.getIntermmediateDistance();
+                settleX = velocity < RIGHT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(range.getDifx()) > (rightDragView.getDragDistance() / 2) ? -range.getHorizontalRange() : -rightDragView.getIntermmediateDistance();
                 swipeState.setState(settleX == 0 ? SwipeState.DragViewState.CLOSED : SwipeState.DragViewState.RIGHT_OPEN);
                 return settleX;
             }
@@ -70,7 +70,7 @@ public class SwipeUtil {
                 return range.getHorizontalMinRange();
             }
             else if(swipeDirection == SWIPE_DIRECTION_LEFT){
-                settleX = velocity < RIGHT_FULL_AUTO_OPEN_TRESHOLD ? -range.getHorizontalRange() : -rightDragView.getIntermmediateDistance();
+                settleX = velocity < RIGHT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(range.getDifx()) > (rightDragView.getDragDistance() / 2) ? -range.getHorizontalRange() : -rightDragView.getIntermmediateDistance();
                 swipeState.setState(settleX == 0 ? SwipeState.DragViewState.CLOSED : SwipeState.DragViewState.RIGHT_OPEN);
             }
         }
@@ -79,7 +79,7 @@ public class SwipeUtil {
     }
 
 
-    public static boolean canSwipe(float x1, float y1, float x2, float y2, SwipeState.DragViewState state, int swipeDirection, SwipeViewLayouter layouter){
+    public static boolean canSwipe(float x1, float y1, float x2, float y2, SwipeState.DragViewState state, SwipeViewLayouter layouter){
 
         boolean canSwipe = false;
 
@@ -90,7 +90,7 @@ public class SwipeUtil {
         boolean isLeftDraggable = layouter.getDragViewByPosition(LEFT_DRAG_VIEW) != null ? layouter.getDragViewByPosition(LEFT_DRAG_VIEW).isDraggable() : false;
         boolean isRightDraggable = layouter.getDragViewByPosition(RIGHT_DRAG_VIEW) != null ? layouter.getDragViewByPosition(RIGHT_DRAG_VIEW).isDraggable() : false;
 
-        if(swipeDirection == HORIZONTAL){
+        if(layouter.getDragDirection() == HORIZONTAL){
             if(diffX > 0){
                 canSwipe = absDiffX > absDiffY && (isLeftDraggable || state == SwipeState.DragViewState.RIGHT_OPEN || layouter.getSurfaceView().getLeft() < 0);
             }
@@ -103,7 +103,7 @@ public class SwipeUtil {
         return canSwipe;
     }
 
-    public static boolean canBounce(float velocity, SwipeLayout.DragDirection direction, SwipeState state){
+    public static boolean canBounce(float velocity, SwipeViewLayouter.DragDirection direction, SwipeState state){
         switch (direction) {
             case HORIZONTAL:
                 if(state.getState() == SwipeState.DragViewState.LEFT_OPEN){

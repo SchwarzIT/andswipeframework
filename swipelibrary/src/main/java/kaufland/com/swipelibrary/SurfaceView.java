@@ -1,6 +1,7 @@
 package kaufland.com.swipelibrary;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -39,6 +40,19 @@ public class SurfaceView extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    public void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation) {
+        setX(surfaceRect.left);
+        setY(surfaceRect.top);
+        getLayoutParams().width = surfaceRect.width();
+        getLayoutParams().height = surfaceRect.height();
+        requestLayout();
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        bringToFront();
+        super.dispatchDraw(canvas);
+    }
 
     private void initSwipe() {
 
@@ -48,11 +62,11 @@ public class SurfaceView extends FrameLayout {
     }
 
     public void moveView(float offset) {
-        setTranslationX(offset);
+        setX(offset);
     }
 
     public void moveToInitial() {
-        setTranslationX(0);
+        setX(0);
     }
 
     public int getSurfaceViewOffsetX() {

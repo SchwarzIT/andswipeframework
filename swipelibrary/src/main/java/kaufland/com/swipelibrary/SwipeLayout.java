@@ -8,6 +8,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,15 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
+import java.security.InvalidParameterException;
+
 import static kaufland.com.swipelibrary.SwipeState.DragViewState.CLOSED;
 import static kaufland.com.swipelibrary.SwipeState.DragViewState.LEFT_OPEN;
+import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
+import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL;
 
 @EViewGroup
-public class SwipeLayout extends LinearLayout {
+public class SwipeLayout extends FrameLayout {
 
     private static final int SWIPE_CLOSING_POINT = 0;
 
@@ -72,15 +77,16 @@ public class SwipeLayout extends LinearLayout {
 
     private float mYvelocity;
 
+    private int mSurfaceViewOffsetX;
+
+    private int mSurfaceViewOffsetY;
+
     private int mDragHelperState;
 
     private float mDragHelperTouchSlop;
 
     private Rect mSurfaceRectHit;
 
-    public enum DragDirection {
-        HORIZONTAL, VERTICAL, NONE
-    }
 
     public interface SwipeListener {
         void onSwipeOpened(SwipeState.DragViewState openedDragView, boolean isFullSwipe);
@@ -116,6 +122,7 @@ public class SwipeLayout extends LinearLayout {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                //mDragHelper.abort();
                 mDownX = ev.getX();
                 mDownY = ev.getY();
                 mDragHelper.processTouchEvent(ev);
@@ -125,7 +132,7 @@ public class SwipeLayout extends LinearLayout {
                 float moveX = ev.getX();
                 float moveY = ev.getY();
 
-                boolean canSwipe = SwipeUtil.canSwipe(mDownX, mDownY, moveX, moveY, mSwipeState.getState(), getOrientation(), mViewLayouter);
+                boolean canSwipe = SwipeUtil.canSwipe(mDownX, mDownY, moveX, moveY, mSwipeState.getState(), mViewLayouter);
 
                 if (!mViewLayouter.isDirectionSwipeable(mDownX, moveX, mViewLayouter)) {
                     return false;
@@ -146,7 +153,7 @@ public class SwipeLayout extends LinearLayout {
                 float diffY = Math.abs(mDownY - ev.getY());
                 mDragRange.setDifx(mDownX - ev.getX());
                 mDragRange.setDify(mDownY - ev.getY());
-                float distance = getOrientation() == HORIZONTAL ? diffX : diffY;
+                float distance = mViewLayouter.getDragDirection() == HORIZONTAL ? diffX : diffY;
                 boolean clicked = mDragHelperTouchSlop > distance;
 
                 mIsDragging = false;
@@ -173,7 +180,7 @@ public class SwipeLayout extends LinearLayout {
                 float lastX = ev.getX();
                 float lastY = ev.getY();
 
-                boolean swipeable = SwipeUtil.canSwipe(mDownX, mDownY, lastX, lastY, mSwipeState.getState(), getOrientation(), mViewLayouter);
+                boolean swipeable = SwipeUtil.canSwipe(mDownX, mDownY, lastX, lastY, mSwipeState.getState(), mViewLayouter);
                 if (swipeable) {
                     mDragHelper.processTouchEvent(ev);
                 } else {
@@ -203,7 +210,7 @@ public class SwipeLayout extends LinearLayout {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                mDragHelper.abort();
+                //mDragHelper.abort();
                 mDragHelper.processTouchEvent(ev);
                 mDownX = x;
                 mDownY = y;
@@ -216,8 +223,8 @@ public class SwipeLayout extends LinearLayout {
             case MotionEvent.ACTION_MOVE:
                 mDragHelper.processTouchEvent(ev);
 
-                float point = getOrientation() == HORIZONTAL ? x : y;
-                float oldPoint = getOrientation() == HORIZONTAL ? mDownX : mDownY;
+                float point = mViewLayouter.getDragDirection() == HORIZONTAL ? x : y;
+                float oldPoint = mViewLayouter.getDragDirection() == HORIZONTAL ? mDownX : mDownY;
                 boolean isClick = mDragHelperTouchSlop > Math.abs(point - oldPoint);
 
                 if (!mIsDragging && isClick) {
@@ -238,7 +245,7 @@ public class SwipeLayout extends LinearLayout {
                 mIsDragging = false;
                 float diffX = Math.abs(mDownX - ev.getX());
                 float diffY = Math.abs(mDownY - ev.getY());
-                float distance = getOrientation() == HORIZONTAL ? diffX : diffY;
+                float distance = mViewLayouter.getDragDirection() == HORIZONTAL ? diffX : diffY;
 
                 boolean clicked = mDragHelperTouchSlop > distance;
                 if (!clicked) {
@@ -255,8 +262,8 @@ public class SwipeLayout extends LinearLayout {
 
     public void smoothSlideTo(float slideOffset) {
 
-        int leftOffset = getOrientation() == HORIZONTAL ? (int) slideOffset : 0;
-        int topOffset = getOrientation() == VERTICAL ? (int) slideOffset : 0;
+        int leftOffset = mViewLayouter.getDragDirection() == HORIZONTAL ? (int) slideOffset : 0;
+        int topOffset = mViewLayouter.getDragDirection() == VERTICAL ? (int) slideOffset : 0;
 
         if (mDragHelper.smoothSlideViewTo(mViewLayouter.getSurfaceView(), leftOffset, topOffset)) {
             ViewCompat.postInvalidateOnAnimation(this);
@@ -268,19 +275,24 @@ public class SwipeLayout extends LinearLayout {
         super.computeScroll();
 
 
-
         if (mDragHelper.continueSettling(true)) {
             ViewCompat.postInvalidateOnAnimation(this);
         } else {
-            mViewLayouter.getSurfaceView().setSurfaceViewOffsetX(mSwipeState.getState() == CLOSED ? 0 : mViewLayouter.getSurfaceView().getLeft());
-            mViewLayouter.getSurfaceView().setSurfaceViewOffsetY(mSwipeState.getState() == CLOSED ? 0 : mViewLayouter.getSurfaceView().getTop());
+            mSurfaceViewOffsetX = mSwipeState.getState() == CLOSED ? 0 : mViewLayouter.getSurfaceView().getLeft();
+            mSurfaceViewOffsetY = mSwipeState.getState() == CLOSED ? 0 : mViewLayouter.getSurfaceView().getTop();
         }
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        mViewLayouter.init(this);
+
+        if (!mViewLayouter.isInitilized()) {
+            mViewLayouter.init(this);
+            mSurfaceRectHit = new Rect(0, 0, mViewLayouter.getSurfaceView().getMeasuredWidth(), mViewLayouter.getSurfaceView().getMeasuredHeight());
+            mViewLayouter.initInitialPosition(mSurfaceRectHit);
+            initDistances();
+        }
         if (mRestoreOnDraw) {
             restoreOnDraw();
             mRestoreOnDraw = false;
@@ -289,28 +301,13 @@ public class SwipeLayout extends LinearLayout {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-
-        if(!mViewLayouter.isInitilized()){
-            mViewLayouter.init(this);
-            mSurfaceRectHit = new Rect();
-            mViewLayouter.getSurfaceView().getDrawingRect(mSurfaceRectHit);
-          //  super.onLayout(true, mSurfaceRectHit.left, mSurfaceRectHit.top, mSurfaceRectHit.right, mSurfaceRectHit.bottom);
-        }else{
-            //super.onLayout(changed, mSurfaceRectHit.left, mSurfaceRectHit.top, mSurfaceRectHit.right, mSurfaceRectHit.bottom);
-        }
 
         super.onLayout(changed, left, top, right, bottom);
 
-
         if (mSwipeState.getState() != CLOSED) {
-            mViewLayouter.getSurfaceView().offsetLeftAndRight(mViewLayouter.getSurfaceView().getSurfaceViewOffsetX());
-            mViewLayouter.getSurfaceView().offsetTopAndBottom(mViewLayouter.getSurfaceView().getSurfaceViewOffsetY());
+            mViewLayouter.getSurfaceView().offsetLeftAndRight(mSurfaceViewOffsetX);
+            mViewLayouter.getSurfaceView().offsetTopAndBottom(mSurfaceViewOffsetY);
         }
     }
 
@@ -340,35 +337,37 @@ public class SwipeLayout extends LinearLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
 
-            if (getOrientation() == HORIZONTAL) {
+            if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.HORIZONTAL) {
 
                 mDragRange.setDraggingBorder(left);
 
-                mViewLayouter.moveView(getOrientation(), left);
+                mViewLayouter.moveView(left);
 
                 mDragRange.setHorizontalRange(checkDragDistance(left, top));
 
 
-            } else if (getOrientation() == VERTICAL) {
-                throw new UnsupportedOperationException("VerticalSwipeNotImplemented");
+            } else if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.VERTICAL) {
+                throw new InvalidParameterException("VerticalSwipeNotImplemented");
             }
         }
 
         @Override
         public void onViewReleased(View releasedChild, final float xvel, float yvel) {
 
-            if (getOrientation() == VERTICAL) {
-                throw new UnsupportedOperationException("VerticalSwipeNotImplemented");
-            } else if (getOrientation() == HORIZONTAL) {
+            if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.VERTICAL) {
+                throw new InvalidParameterException("VerticalSwipeNotImplemented");
+            } else if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.HORIZONTAL) {
                 mDragRange.setCheckRange(mDragRange.getHorizontalRange());
 
                 mSwipeState.setSettled(SwipeUtil.determineSwipeSettleStateHorizontal(xvel, mDragRange));
 
                 final int settleDestX = SwipeUtil.determineSwipeHorizontalState(xvel, mSwipeState, mDragRange, mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW), mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW));
 
+                Log.e("test", mSwipeState.getState().name());
                 if (mDragHelper.settleCapturedViewAt(settleDestX, 0)) {
                     ViewCompat.postInvalidateOnAnimation(parent);
                 }
+
 
                 mShouldSettle = true;
                 mSwipeSettlingPoint = settleDestX;
@@ -385,7 +384,7 @@ public class SwipeLayout extends LinearLayout {
         public int clampViewPositionVertical(View child, int top, int dy) {
             if (mSwipeState.getState() == LEFT_OPEN ||
                     mSwipeState.getState() == SwipeState.DragViewState.RIGHT_OPEN ||
-                    getOrientation() == HORIZONTAL) {
+                    mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.HORIZONTAL) {
                 return 0;
             }
 
@@ -405,7 +404,7 @@ public class SwipeLayout extends LinearLayout {
         public int clampViewPositionHorizontal(View child, int left, int dx) {
             if (mSwipeState.getState() == SwipeState.DragViewState.TOP_OPEN ||
                     mSwipeState.getState() == SwipeState.DragViewState.BOTTOM_OPEN ||
-                    getOrientation() == VERTICAL) {
+                    mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.VERTICAL) {
                 return 0;
             }
 
@@ -436,12 +435,12 @@ public class SwipeLayout extends LinearLayout {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 
-        if (getOrientation() == HORIZONTAL) {
+        if (mViewLayouter.getDragDirection() == HORIZONTAL) {
             int horizontal = (int) (w * 0.33);
             mDragRange.setHorizontalRange(horizontal);
             mDragRange.setHorizontalMaxRange(w);
             mDragRange.setVerticalRange(0);
-        } else if (getOrientation() == VERTICAL) {
+        } else if (mViewLayouter.getDragDirection() == VERTICAL) {
             int verticalRange = (int) (h * 0.33);
             mDragRange.setHorizontalRange(0);
             mDragRange.setVerticalMaxRange(h);
@@ -465,10 +464,16 @@ public class SwipeLayout extends LinearLayout {
 
     public void closeSwipeNoAnimation() {
         mSwipeState.setState(CLOSED);
+        mSurfaceViewOffsetX = 0;
+        mSurfaceViewOffsetY = 0;
         mViewLayouter.restoreState(mSwipeState.getState());
     }
 
     public void openSwipe(final int position, boolean notifyCallback) {
+//
+//        DragView mDragViewByPosition = mViewLayouter.getDragViewByPosition(position);
+//        mDragViewByPosition.moveView(mDragViewByPosition.getDragDistance());
+//
 //        switch (position) {
 //            case LEFT_DRAG_VIEW:
 //                if (mLeftDragView != null) {
@@ -541,29 +546,26 @@ public class SwipeLayout extends LinearLayout {
     }
 
     private void onStopDraggingToClosed() {
-        mViewLayouter.onStopDraggingToClosed(getOrientation());
+        mViewLayouter.onStopDraggingToClosed();
     }
 
     private int checkDragDistance(int left, int top) {
         int distance = 0;
-//        int leftDragDistance = mLeftDragView != null ? mLeftDragView.getDragDistance() : 0;
-//        int rightDragDistance = mRightDragView != null ? mRightDragView.getDragDistance() : 0;
-//
-//        if (mSwipeState.getState() == LEFT_OPEN) {
-//            distance = leftDragDistance;
-//        } else if (mSwipeState.getState() == SwipeState.DragViewState.RIGHT_OPEN) {
-//            distance = rightDragDistance;
-//        } else if (mSwipeState.getState() == SwipeState.DragViewState.TOP_OPEN) {
-//            distance = mTopDragView.getDragDistance();
-//        } else if (mSwipeState.getState() == SwipeState.DragViewState.BOTTOM_OPEN) {
-//            distance = mBottomDragView.getDragDistance();
-//        } else if (mSwipeState.getState() == CLOSED) {
-//            if (mDragDirection == DragDirection.HORIZONTAL) {
-//                distance = left >= 0 ? leftDragDistance : rightDragDistance;
-//            } else if (mDragDirection == DragDirection.VERTICAL) {
+        int leftDragDistance = mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW) != null ? mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW).getDragDistance() : 0;
+        int rightDragDistance = mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW) != null ? mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW).getDragDistance() : 0;
+
+        if (mSwipeState.getState() == LEFT_OPEN) {
+            distance = leftDragDistance;
+        } else if (mSwipeState.getState() == SwipeState.DragViewState.RIGHT_OPEN) {
+            distance = rightDragDistance;
+        } else if (mSwipeState.getState() == CLOSED) {
+            if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.HORIZONTAL) {
+                distance = left >= 0 ? leftDragDistance : rightDragDistance;
+            }
+//            else if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.VERTICAL) {
 //                distance = top >= 0 ? mTopDragView.getDragDistance() : mBottomDragView.getDragDistance();
 //            }
-//        }
+        }
 
         return distance;
     }
@@ -577,38 +579,56 @@ public class SwipeLayout extends LinearLayout {
     private void notifySwipeStateChangedOverX(float settleDestX, float xVelocity) {
         final boolean fullSwipe = Math.abs(settleDestX) == mDragRange.getHorizontalRange();
 
-//        if (fullSwipe) {
-//            boolean canBounce = SwipeUtil.canBounce(xVelocity, mDragDirection, mSwipeState);
-//
-//            if (mSwipeSettlingPoint == settleDestX && !mActiveDrag.isDragFullyOpened()) {
-//                if (mSwipeListener != null) {
-//                    mSwipeListener.onSwipeOpened(mSwipeState.getState(), fullSwipe);
-//
-//                }
-//                mShouldSettle = false;
-//            } else if (mActiveDrag.isDragFullyOpened() && canBounce) {
-//                if (mSwipeListener != null) {
-//                    mSwipeListener.onBounce(mSwipeState.getState());
-//                }
-//                mShouldSettle = false;
-//            }
-//
-//            mActiveDrag.onFullSwipe();
-//        } else if (settleDestX == 0 || settleDestX == this.getRight()) {
-//            onStopDraggingToClosed();
-//            if (mSwipeListener != null) {
-//                mSwipeListener.onSwipeClosed(mSwipeState.getState());
-//            }
-//            mShouldSettle = false;
-//        } else if (mActiveDrag.getIntermmediateDistance() == settleDestX) {
-//            mActiveDrag.onSwipe();
-//
-//            if (mSwipeListener != null) {
-//                mSwipeListener.onSwipeOpened(mSwipeState.getState(), mActiveDrag.isAllChildrenVisible());
-//            }
-//
-//            mShouldSettle = false;
-//        }
+        DragView mActiveDrag;
+        switch (mSwipeState.getState()) {
+            case LEFT_OPEN:
+                mActiveDrag = mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW);
+                break;
+
+            case RIGHT_OPEN:
+                mActiveDrag = mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW);
+                break;
+            default:
+                mActiveDrag= mViewLayouter.findViewBySwipeDirection((int) mDragRange.getDifx());
+                break;
+        }
+
+        if (mActiveDrag == null) {
+            return;
+        }
+
+        if (fullSwipe) {
+            boolean canBounce = SwipeUtil.canBounce(xVelocity, mViewLayouter.getDragDirection(), mSwipeState);
+
+            if (mSwipeSettlingPoint == settleDestX && !mActiveDrag.isDragFullyOpened()) {
+                if (mSwipeListener != null) {
+                    mSwipeListener.onSwipeOpened(mSwipeState.getState(), fullSwipe);
+
+                }
+                mShouldSettle = false;
+            } else if (mActiveDrag.isDragFullyOpened() && canBounce) {
+                if (mSwipeListener != null) {
+                    mSwipeListener.onBounce(mSwipeState.getState());
+                }
+                mShouldSettle = false;
+            }
+
+            mActiveDrag.onFullSwipe();
+        } else if (settleDestX == 0 || settleDestX == this.getRight()) {
+            onStopDraggingToClosed();
+            if (mSwipeListener != null) {
+                mSwipeListener.onSwipeClosed(mSwipeState.getState());
+            }
+            mShouldSettle = false;
+        } else if (mActiveDrag.getIntermmediateDistance() == settleDestX) {
+            mActiveDrag.onSwipe();
+
+            if (mSwipeListener != null) {
+                mSwipeListener.onSwipeOpened(mSwipeState.getState(), mActiveDrag.isAllChildrenVisible());
+            }
+
+            mShouldSettle = false;
+        }
     }
 
     private void notifySwipeStateChangedOverY(float settleDestY, float yVelocity) {
@@ -634,8 +654,29 @@ public class SwipeLayout extends LinearLayout {
 //        }
     }
 
+    private void initDistances() {
+        if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.HORIZONTAL) {
+            int leftDistance = 0;
+            int rightDistance = 0;
+
+            if (mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW) != null && mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW).getWidth() > 0) {
+                leftDistance = mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW).getIntermmediateDistance();
+            }
+
+            if (mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW) != null && mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW).getWidth() > 0) {
+                rightDistance = mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW).getWidth();
+            }
+
+            mDragRange.setHorizontalRange(leftDistance < rightDistance ? leftDistance : rightDistance);
+            mDragRange.setHorizontalMaxRange(mViewLayouter.getSurfaceView().getWidth());
+            mDragRange.setVerticalRange(0);
+        } else if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.VERTICAL) {
+            throw new InvalidParameterException("VerticalSwipeNotImplemented");
+        }
+    }
+
     private int determineDraggingRange(int distance) {
-        return mViewLayouter.determineDraggingRange(getOrientation(), distance);
+        return mViewLayouter.determineDraggingRange(distance);
     }
 
     private void initSwipe() {
