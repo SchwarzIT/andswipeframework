@@ -68,12 +68,20 @@ class DragView extends LinearLayout implements SwipeableView {
     }
 
     @Override
-    public void moveView(float offset, SurfaceView view) {
-        //int distance = (int) calculatePadding(offset);
+    public void moveView(float offset, SurfaceView view, View changedView) {
+
         if(mViewPosition == LEFT_DRAG_VIEW){
-            setX(view.getLeft() - getWidth());
+            if(!this.equals(changedView)){
+                setX(view.getX() - getWidth());
+            }else {
+                view.moveView(getX() + getWidth());
+            }
         }else if(mViewPosition == RIGHT_DRAG_VIEW){
-            setX(view.getRight());
+            if(!this.equals(changedView)){
+                setX(view.getX() + getWidth());
+            }else {
+                view.moveView(getX() - view.getWidth());
+            }
         }
 
     }
@@ -139,7 +147,7 @@ class DragView extends LinearLayout implements SwipeableView {
                 if (mViewPosition == LEFT_DRAG_VIEW) {
                     view.setSurfaceViewOffsetX(getDragDistance());
                     view.setSurfaceViewOffsetY(0);
-                    moveView(getDragDistance(), view);
+                    moveView(getDragDistance(), view, null);
                 }
 
                 if (mViewPosition == RIGHT_DRAG_VIEW) {
@@ -151,7 +159,7 @@ class DragView extends LinearLayout implements SwipeableView {
                 if (mViewPosition == RIGHT_DRAG_VIEW) {
                     view.setSurfaceViewOffsetX(-getDragDistance());
                     view.setSurfaceViewOffsetY(0);
-                    moveView(getDragDistance(), view);
+                    moveView(getDragDistance(), view, null);
                 }
 
                 if (mViewPosition == LEFT_DRAG_VIEW) {
@@ -240,28 +248,6 @@ class DragView extends LinearLayout implements SwipeableView {
 
         mChildIndex++;
         return nextDistance;
-    }
-
-    private float calculatePadding(float offset) {
-
-        float calculatedDistance = 0;
-
-        if (mViewPosition == LEFT_DRAG_VIEW) {
-            if (offset > 0) {
-                calculatedDistance = -mDragDistance + offset > 0 ? 0 : -mDragDistance + offset;
-            } else {
-                calculatedDistance = offset > -mDragDistance ? -mDragDistance : offset;
-            }
-        } else if (mViewPosition == RIGHT_DRAG_VIEW) {
-            if (offset < 0) {
-                float distance = mDragDistance - Math.abs(offset);
-                calculatedDistance = distance < 0 ? 0 : distance;
-            } else {
-                calculatedDistance = mLowerBound + offset > mDragDistance ? mDragDistance : mLowerBound + offset;
-            }
-        }
-
-        return calculatedDistance;
     }
 
     boolean isAllChildrenVisible() {

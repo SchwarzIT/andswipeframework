@@ -34,6 +34,14 @@ public class SwipeViewLayouter {
 
     private DragDirection mDragDirection = DragDirection.NONE;
 
+    public void requestLayout() {
+        for (DragView dragView : mDragViews.values()) {
+            dragView.requestLayout();
+        }
+
+        mSurfaceView.requestLayout();
+    }
+
     public enum DragDirection {
         HORIZONTAL, VERTICAL, NONE
     }
@@ -95,11 +103,12 @@ public class SwipeViewLayouter {
         return mSurfaceView;
     }
 
-    public void moveView(int positionChanges) {
+    public void moveView(View changedView, int positionChanges) {
+
         for (DragView view: mDragViews.values()) {
             if(mDragDirection == DragDirection.HORIZONTAL){
                 if(view.getViewPosition() == LEFT_DRAG_VIEW || view.getViewPosition() == RIGHT_DRAG_VIEW){
-                    view.moveView(positionChanges, mSurfaceView);
+                    view.moveView(positionChanges, mSurfaceView, changedView);
                 }
             }
         }
