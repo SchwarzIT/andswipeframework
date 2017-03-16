@@ -24,6 +24,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.security.InvalidParameterException;
 
+import static android.support.v4.widget.ViewDragHelper.STATE_DRAGGING;
 import static kaufland.com.swipelibrary.SwipeState.DragViewState.CLOSED;
 import static kaufland.com.swipelibrary.SwipeState.DragViewState.LEFT_OPEN;
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
@@ -77,12 +78,6 @@ public class SwipeLayout extends FrameLayout {
 
     private float mYvelocity;
 
-    private int mSurfaceViewOffsetX;
-
-    private int mSurfaceViewOffsetY;
-
-    private int mDragHelperState;
-
     private float mDragHelperTouchSlop;
 
     private Rect mSurfaceRectHit;
@@ -122,6 +117,7 @@ public class SwipeLayout extends FrameLayout {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+
                 mDragHelper.abort();
                 mDownX = ev.getX();
                 mDownY = ev.getY();
@@ -162,15 +158,15 @@ public class SwipeLayout extends FrameLayout {
                     mDragHelper.cancel();
                 }
 
-//                if (ev.getX() < 0 || ev.getY() < 0 || ev.getX() > getMeasuredWidth() || ev.getY() > getMeasuredHeight()) {
-//
-//                    mDragHelper.cancel();
-//                    smoothSlideTo(SWIPE_CLOSING_POINT);
-//                    mSwipeState.setState(CLOSED);
-//                    return false;
-//                }
+                if (ev.getX() < 0 || ev.getY() < 0 || ev.getX() > getMeasuredWidth() || ev.getY() > getMeasuredHeight()) {
 
-                if (!clicked && mDragAllowed) {
+
+                    ev.setAction(MotionEvent.ACTION_UP);
+                    mDragHelper.processTouchEvent(ev);
+                    return false;
+                }
+
+                if (mDragAllowed) {
                     mDragHelper.processTouchEvent(ev);
                 }
 
@@ -181,12 +177,12 @@ public class SwipeLayout extends FrameLayout {
                 float lastX = ev.getX();
                 float lastY = ev.getY();
 
-                boolean swipeable = SwipeUtil.canSwipe(mDownX, mDownY, lastX, lastY, mSwipeState.getState(), mViewLayouter);
-                if (swipeable) {
+//                boolean swipeable = SwipeUtil.canSwipe(mDownX, mDownY, lastX, lastY, mSwipeState.getState(), mViewLayouter);
+//                if (swipeable) {
                     mDragHelper.processTouchEvent(ev);
-                } else {
-                    mDragHelper.cancel();
-                }
+//                } else {
+//                    mDragHelper.cancel();
+//                }
                 break;
 
             default:
@@ -216,9 +212,6 @@ public class SwipeLayout extends FrameLayout {
                 mDownX = x;
                 mDownY = y;
                 mIsDragging = false;
-                if (!isDragViewOpened()) {
-                    return false;
-                }
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -248,12 +241,7 @@ public class SwipeLayout extends FrameLayout {
                 float diffY = Math.abs(mDownY - ev.getY());
                 float distance = mViewLayouter.getDragDirection() == HORIZONTAL ? diffX : diffY;
 
-                boolean clicked = mDragHelperTouchSlop > distance;
-                if (!clicked) {
-                    mDragHelper.processTouchEvent(ev);
-                } else {
-                    mDragHelper.abort();
-                }
+                mDragHelper.processTouchEvent(ev);
                 break;
         }
 
@@ -278,14 +266,12 @@ public class SwipeLayout extends FrameLayout {
 
         if (mDragHelper.continueSettling(true)) {
             ViewCompat.postInvalidateOnAnimation(this);
-        } else {
-            mSurfaceViewOffsetX = mSwipeState.getState() == CLOSED ? 0 : mViewLayouter.getSurfaceView().getLeft();
-            mSurfaceViewOffsetY = mSwipeState.getState() == CLOSED ? 0 : mViewLayouter.getSurfaceView().getTop();
         }
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+
         super.dispatchDraw(canvas);
 
         if (!mViewLayouter.isInitilized()) {
@@ -306,10 +292,6 @@ public class SwipeLayout extends FrameLayout {
 
         super.onLayout(changed, left, top, right, bottom);
 
-        if (mSwipeState.getState() != CLOSED) {
-            mViewLayouter.getSurfaceView().offsetLeftAndRight(mSurfaceViewOffsetX);
-            mViewLayouter.getSurfaceView().offsetTopAndBottom(mSurfaceViewOffsetY);
-        }
     }
 
     private class SwipeDragViewHelper extends ViewDragHelper.Callback {
@@ -323,16 +305,6 @@ public class SwipeLayout extends FrameLayout {
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
             return child.getId() == mViewLayouter.getSurfaceView().getId() || child.getId() == mViewLayouter.getDragViewByPosition(LEFT_DRAG_VIEW).getId() || child.getId() == mViewLayouter.getDragViewByPosition(RIGHT_DRAG_VIEW).getId();
-        }
-
-        @Override
-        public void onViewDragStateChanged(int state) {
-
-            if (!mSwipeEnabled || mDragHelperState == state) {
-                return;
-            }
-
-            mDragHelperState = state;
         }
 
         @Override
@@ -363,20 +335,26 @@ public class SwipeLayout extends FrameLayout {
 
                 final int settleDestX = SwipeUtil.determineSwipeHorizontalState(xvel, mSwipeState, mDragRange, mViewLayouter, releasedChild);
 
-                if (mDragHelper.settleCapturedViewAt(settleDestX, 0)) {
+                if (mDragHelper.smoothSlideViewTo(releasedChild, settleDestX, 0)) {
                     ViewCompat.postInvalidateOnAnimation(parent);
+                    mViewLayouter.requestLayout();
+
+                    mShouldSettle = true;
+                    mSwipeSettlingPoint = settleDestX;
+                    mXvelocity = xvel;
+
+
+                    if (mShouldSettle) {
+                        notifySwipeStateChangedOverX(mSwipeSettlingPoint, mXvelocity);
+                    }
                 }
 
-                mViewLayouter.requestLayout();
+//                else{
+//                    mViewLayouter.moveView(releasedChild, settleDestX);
+//
+//                }
 
-                mShouldSettle = true;
-                mSwipeSettlingPoint = settleDestX;
-                mXvelocity = xvel;
 
-
-                if (mShouldSettle) {
-                    notifySwipeStateChangedOverX(mSwipeSettlingPoint, mXvelocity);
-                }
             }
         }
 
@@ -468,8 +446,6 @@ public class SwipeLayout extends FrameLayout {
 
     public void closeSwipeNoAnimation() {
         mSwipeState.setState(CLOSED);
-        mSurfaceViewOffsetX = 0;
-        mSurfaceViewOffsetY = 0;
         mViewLayouter.restoreState(mSwipeState.getState());
     }
 
@@ -687,11 +663,6 @@ public class SwipeLayout extends FrameLayout {
 
         mDragHelper = ViewDragHelper.create(this, 1.0f, new SwipeDragViewHelper(this));
         mDragHelperTouchSlop = mDragHelper.getTouchSlop() * 2;
-    }
-
-    public boolean isDragViewOpened() {
-        int swipeLeft = mViewLayouter.getSurfaceView().getLeft();
-        return swipeLeft != 0;
     }
 
 }

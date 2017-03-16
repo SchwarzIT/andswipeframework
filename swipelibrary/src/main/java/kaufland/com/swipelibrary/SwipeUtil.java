@@ -60,7 +60,7 @@ public class SwipeUtil {
                     }
 
                     swipeState.setState(SwipeState.DragViewState.LEFT_OPEN);
-                    return velocity > LEFT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(range.getDifx()) > (rightDragView.getDragDistance() / 2) ? range.getHorizontalRange() : leftDragView.getIntermmediateDistance();
+                    return velocity > LEFT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(range.getDifx()) > (leftDragView.getDragDistance() / 2) ? range.getHorizontalRange() : leftDragView.getIntermmediateDistance();
                 } else if (swipeDirection == SWIPE_DIRECTION_LEFT) {
                     if (!rightDragView.isDraggable()) {
                         return settleX;
@@ -87,7 +87,7 @@ public class SwipeUtil {
                     swipeState.setState(settleX == 0 ? SwipeState.DragViewState.CLOSED : SwipeState.DragViewState.RIGHT_OPEN);
                 }
             }
-        }
+       }
 
 
         return settleX;
