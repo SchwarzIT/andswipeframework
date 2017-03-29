@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kaufland.com.swipelibrary.dragengine.DragViewEngine;
+
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL;
 import static kaufland.com.swipelibrary.SwipeLayout.LEFT_DRAG_VIEW;
@@ -28,14 +30,14 @@ import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_DRAG_VIEW;
 @EBean
 public class SwipeViewLayouter {
 
-    protected Map<Integer, DragView> mDragViews = new HashMap<>();
+    protected Map<Integer, DragViewEngine> mDragViews = new HashMap<>();
 
     protected SurfaceView mSurfaceView;
 
     private DragDirection mDragDirection = DragDirection.NONE;
 
     public void requestLayout() {
-        for (DragView dragView : mDragViews.values()) {
+        for (DragViewEngine dragView : mDragViews.values()) {
             dragView.forceLayout();
         }
 
@@ -60,8 +62,8 @@ public class SwipeViewLayouter {
             View child = parent.getChildAt(i);
 
             if (child instanceof DragView) {
-                mDragViews.put(((DragView)child).getViewPosition(), (DragView) child);
-                mDragDirection = ((DragView)child).getViewPosition() <= 2 ? HORIZONTAL : VERTICAL;
+                mDragViews.put(((DragView) child).getViewPosition(), (DragView) child);
+                mDragDirection = ((DragView) child).getViewPosition() <= 2 ? HORIZONTAL : VERTICAL;
             } else if (child instanceof SurfaceView) {
                 mSurfaceView = (SurfaceView) child;
             } else {
@@ -73,17 +75,17 @@ public class SwipeViewLayouter {
             throw new InvalidParameterException("SurfaceView in mandatory for SwipeLayout");
         }
 
-        if(mDragViews.size() <= 0){
+        if (mDragViews.size() <= 0) {
             throw new InvalidParameterException("SwipeLayout needs at least 1 DragView");
         }
 
 
     }
 
-    public void initInitialPosition(Rect surfaceRect){
+    public void initInitialPosition(Rect surfaceRect) {
 
-        for (DragView dragView : mDragViews.values()) {
-           dragView.initializePosition(surfaceRect, mDragDirection);
+        for (DragViewEngine dragView : mDragViews.values()) {
+            dragView.initializePosition(surfaceRect, mDragDirection);
         }
 
         mSurfaceView.initializePosition(surfaceRect, mDragDirection);
@@ -94,7 +96,7 @@ public class SwipeViewLayouter {
         return mDragDirection;
     }
 
-    public DragView getDragViewByPosition(int position){
+    public DragViewEngine getDragViewByPosition(int position) {
         return mDragViews.get(position);
     }
 
@@ -105,42 +107,31 @@ public class SwipeViewLayouter {
 
     public void moveView(View changedView, int positionChanges) {
 
-        if(changedView.equals(mSurfaceView)){
+        if (changedView.equals(mSurfaceView)) {
             mSurfaceView.moveView(positionChanges);
         }
 
-        for (DragView view: mDragViews.values()) {
-            if(mDragDirection == DragDirection.HORIZONTAL){
-                if(view.getViewPosition() == LEFT_DRAG_VIEW || view.getViewPosition() == RIGHT_DRAG_VIEW){
-                    view.moveView(positionChanges, mSurfaceView, changedView);
-                }
+        for (DragViewEngine view : mDragViews.values()) {
+            if (mDragDirection == DragDirection.HORIZONTAL) {
+                view.moveView(positionChanges, mSurfaceView, changedView);
             }
         }
     }
 
-    public void restoreState(SwipeState.DragViewState state){
+    public void restoreState(SwipeState.DragViewState state) {
 
-        for (DragView view: mDragViews.values()) {
-                if(view.getViewPosition() == LEFT_DRAG_VIEW || view.getViewPosition() == RIGHT_DRAG_VIEW){
-                    view.restoreState(state, mSurfaceView);
-                }
+        for (DragViewEngine view : mDragViews.values()) {
+            view.restoreState(state, mSurfaceView);
         }
         mSurfaceView.requestLayout();
     }
 
-    public int determineDraggingRange(int distance) {
+    public DragView findViewBySwipeDirection(int distance) {
 
-        DragView view = findViewBySwipeDirection(distance);
-
-        return view != null && view.isDraggable() ? distance : 0;
-    }
-
-    public DragView findViewBySwipeDirection(int distance){
-
-        if(mDragDirection == HORIZONTAL){
-            if(distance < 0){
+        if (mDragDirection == HORIZONTAL) {
+            if (distance < 0) {
                 return getDragViewByPosition(RIGHT_DRAG_VIEW);
-            }else if(distance > 0){
+            } else if (distance > 0) {
                 return getDragViewByPosition(LEFT_DRAG_VIEW);
             }
         }
@@ -148,7 +139,7 @@ public class SwipeViewLayouter {
         return null;
     }
 
-    public boolean isDirectionSwipeable(float startX, float endX, SwipeViewLayouter layouter){
+    public boolean isDirectionSwipeable(float startX, float endX, SwipeViewLayouter layouter) {
         float diffX = endX - startX;
 
         DragView view = findViewBySwipeDirection((int) diffX);

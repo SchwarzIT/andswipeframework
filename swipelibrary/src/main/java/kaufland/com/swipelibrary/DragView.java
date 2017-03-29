@@ -17,23 +17,15 @@ import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_DRAG_VIEW;
 import static kaufland.com.swipelibrary.SwipeLayout.TOP_DRAG_VIEW;
 
 @EViewGroup
-class DragView extends LinearLayout implements SwipeableView {
+public class DragView extends LinearLayout {
 
     private int mSettlePointResourceId;
 
     private int mViewPosition;
 
-    private int mDragDistance;
-
-    private int mIntermmediateDistance;
-
     private boolean mDraggable = true;
 
     private boolean mIsInitialized;
-
-    private int mInitialXPos;
-
-    private int mInitialYPos;
 
     private boolean mBouncePossible;
 
@@ -63,140 +55,9 @@ class DragView extends LinearLayout implements SwipeableView {
         }
     }
 
-    @Override
-    public void moveView(float offset, SurfaceView view, View changedView) {
 
-        if(mViewPosition == LEFT_DRAG_VIEW){
-            if(!this.equals(changedView)){
-                setX(view.getX() - getWidth());
-            }else {
-                view.moveView(getX() + getWidth());
-            }
-        }else if(mViewPosition == RIGHT_DRAG_VIEW){
-            if(!this.equals(changedView)){
-                setX(view.getX() + getWidth());
-            }else {
-                view.moveView(getX() - view.getWidth());
-            }
-        }
-
-    }
-
-    @Override
-    public void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation) {
-        switch (mViewPosition) {
-            case LEFT_DRAG_VIEW:
-                mDragDistance = getRight();
-                mInitialXPos = surfaceRect.left - getWidth();
-                mInitialYPos = surfaceRect.top;
-                mIsInitialized = true;
-                if(mSettlePointResourceId != -1){
-                    mIntermmediateDistance = findViewById(mSettlePointResourceId).getRight();
-                }else{
-                    mIntermmediateDistance = getRight();
-                }
-                moveToInitial();
-                break;
-
-            case RIGHT_DRAG_VIEW:
-                mDragDistance = getWidth();
-                mInitialXPos = surfaceRect.right + getWidth();
-                mInitialYPos = surfaceRect.top;
-                mIsInitialized = true;
-                if(mSettlePointResourceId != -1){
-                    mIntermmediateDistance = findViewById(mSettlePointResourceId).getRight();
-                }else{
-                    mIntermmediateDistance = getWidth();
-                }
-                moveToInitial();
-                break;
-
-            case TOP_DRAG_VIEW:
-                mDragDistance = getBottom();
-                setTranslationY(-mDragDistance);
-                mIsInitialized = true;
-                if(mSettlePointResourceId != -1){
-                    mIntermmediateDistance = findViewById(mSettlePointResourceId).getRight();
-                }
-                moveToInitial();
-                break;
-
-            case BOTTOM_DRAG_VIEW:
-                mDragDistance = getTop();
-                setTranslationY(mDragDistance);
-                mIsInitialized = true;
-                if(mSettlePointResourceId != -1){
-                    mIntermmediateDistance = findViewById(mSettlePointResourceId).getRight();
-                }
-                moveToInitial();
-                break;
-
-            default:
-                mIsInitialized = false;
-        }
-
-    }
-
-    @Override
-    public void moveToInitial() {
-        setX(mInitialXPos);
-        setY(mInitialYPos);
-    }
-
-
-
-    @Override
-    public void restoreState(SwipeState.DragViewState state, SurfaceView view) {
-        switch (state) {
-            case LEFT_OPEN:
-
-                if (mViewPosition == LEFT_DRAG_VIEW) {
-                    view.setSurfaceViewOffsetX(getDragDistance());
-                    view.setSurfaceViewOffsetY(0);
-                    moveView(getDragDistance(), view, null);
-                }
-
-                if (mViewPosition == RIGHT_DRAG_VIEW) {
-                    moveToInitial();
-                }
-                break;
-            case RIGHT_OPEN:
-
-                if (mViewPosition == RIGHT_DRAG_VIEW) {
-                    view.setSurfaceViewOffsetX(-getDragDistance());
-                    view.setSurfaceViewOffsetY(0);
-                    moveView(getDragDistance(), view, null);
-                }
-
-                if (mViewPosition == LEFT_DRAG_VIEW) {
-                    moveToInitial();
-                }
-                break;
-            case TOP_OPEN:
-                //TODO Implementation
-                break;
-            case BOTTOM_OPEN:
-                //TODO Implementation
-                break;
-            default:
-                view.setSurfaceViewOffsetX(0);
-                view.setSurfaceViewOffsetY(0);
-                if (mViewPosition == RIGHT_DRAG_VIEW) {
-                    moveToInitial();
-                }
-                if (mViewPosition == LEFT_DRAG_VIEW) {
-                    moveToInitial();
-                }
-                break;
-        }
-    }
-
-    int getDragDistance() {
-        return mDragDistance;
-    }
-
-    int getIntermmediateDistance() {
-        return mIntermmediateDistance;
+    public int getSettlePointResourceId() {
+        return mSettlePointResourceId;
     }
 
     void setDraggable(boolean canDrag) {

@@ -344,16 +344,7 @@ public class SwipeLayout extends FrameLayout {
                 return 0;
             }
 
-            int draggingRange;
-            if (mSwipeState.getState() == SwipeState.DragViewState.TOP_OPEN) {
-                draggingRange = top > 0 ? top : 0;
-            } else if (mSwipeState.getState() == SwipeState.DragViewState.BOTTOM_OPEN) {
-                draggingRange = top > 0 ? 0 : top;
-            } else {
-                draggingRange = mDragAllowed ? determineDraggingRange(top) : 0;
-            }
-
-            return mDragAllowed ? draggingRange : 0;
+            return 0;
         }
 
         @Override
@@ -745,10 +736,6 @@ public class SwipeLayout extends FrameLayout {
         } else if (mViewLayouter.getDragDirection() == SwipeViewLayouter.DragDirection.VERTICAL) {
             throw new InvalidParameterException("VerticalSwipeNotImplemented");
         }
-    }
-
-    private int determineDraggingRange(int distance) {
-        return mViewLayouter.determineDraggingRange(distance);
     }
 
     private void initSwipe() {
