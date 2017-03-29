@@ -36,10 +36,10 @@ public class SwipeViewLayouter {
 
     public void requestLayout() {
         for (DragView dragView : mDragViews.values()) {
-            dragView.requestLayout();
+            dragView.forceLayout();
         }
 
-        mSurfaceView.requestLayout();
+        mSurfaceView.forceLayout();
     }
 
     public enum DragDirection {
@@ -126,20 +126,6 @@ public class SwipeViewLayouter {
                 }
         }
         mSurfaceView.requestLayout();
-    }
-
-    public void onStopDraggingToClosed() {
-        if (mDragDirection == HORIZONTAL) {
-
-            for (DragView view: mDragViews.values()) {
-                if(view.getViewPosition() == LEFT_DRAG_VIEW || view.getViewPosition() == RIGHT_DRAG_VIEW){
-                    view.onClose();
-                }
-            }
-
-        } else if (mDragDirection == VERTICAL) {
-            throw new UnsupportedOperationException("VerticalSwipeNotImplemented");
-        }
     }
 
     public int determineDraggingRange(int distance) {

@@ -15,7 +15,4 @@ public interface SwipeableView {
     void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation);
     void moveToInitial();
     void restoreState(SwipeState.DragViewState state, SurfaceView view);
-    void onSwipe();
-    void onClose();
-    void onFullSwipe();
 }

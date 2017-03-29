@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import org.androidannotations.annotations.EViewGroup;
@@ -18,21 +19,13 @@ import static kaufland.com.swipelibrary.SwipeLayout.TOP_DRAG_VIEW;
 @EViewGroup
 class DragView extends LinearLayout implements SwipeableView {
 
+    private int mSettlePointResourceId;
+
     private int mViewPosition;
 
     private int mDragDistance;
 
-    private int mLowerBound;
-
-    private int mUpperBound;
-
     private int mIntermmediateDistance;
-
-    private int mChildIndex;
-
-    private int[] mDistances;
-
-    private boolean mIsFullyOpened;
 
     private boolean mDraggable = true;
 
@@ -42,6 +35,8 @@ class DragView extends LinearLayout implements SwipeableView {
 
     private int mInitialYPos;
 
+    private boolean mBouncePossible;
+
     DragView(Context context) {
         super(context);
 
@@ -49,19 +44,20 @@ class DragView extends LinearLayout implements SwipeableView {
 
     DragView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.DragView, 0, 0);
-        try{
-            mViewPosition = typedArray.getInt(R.styleable.DragView_position, 0);
-        } finally {
-            typedArray.recycle();
-        }
+        initStyleable(context, attrs);
     }
 
     DragView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initStyleable(context, attrs);
+    }
+
+    private void initStyleable(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.DragView, 0, 0);
         try{
             mViewPosition = typedArray.getInt(R.styleable.DragView_position, 0);
+            mSettlePointResourceId = typedArray.getResourceId(R.styleable.DragView_settleView, -1);
+            mBouncePossible = typedArray.getBoolean(R.styleable.DragView_bouncePossible, false);
         } finally {
             typedArray.recycle();
         }
@@ -94,18 +90,24 @@ class DragView extends LinearLayout implements SwipeableView {
                 mInitialXPos = surfaceRect.left - getWidth();
                 mInitialYPos = surfaceRect.top;
                 mIsInitialized = true;
-                checkChildrenDistance();
+                if(mSettlePointResourceId != -1){
+                    mIntermmediateDistance = findViewById(mSettlePointResourceId).getRight();
+                }else{
+                    mIntermmediateDistance = getRight();
+                }
                 moveToInitial();
                 break;
 
             case RIGHT_DRAG_VIEW:
                 mDragDistance = getWidth();
-                mUpperBound = getRight();
-                mLowerBound = getLeft();
                 mInitialXPos = surfaceRect.right + getWidth();
                 mInitialYPos = surfaceRect.top;
                 mIsInitialized = true;
-                checkChildrenDistance();
+                if(mSettlePointResourceId != -1){
+                    mIntermmediateDistance = findViewById(mSettlePointResourceId).getRight();
+                }else{
+                    mIntermmediateDistance = getWidth();
+                }
                 moveToInitial();
                 break;
 
@@ -113,7 +115,9 @@ class DragView extends LinearLayout implements SwipeableView {
                 mDragDistance = getBottom();
                 setTranslationY(-mDragDistance);
                 mIsInitialized = true;
-                checkChildrenDistance();
+                if(mSettlePointResourceId != -1){
+                    mIntermmediateDistance = findViewById(mSettlePointResourceId).getRight();
+                }
                 moveToInitial();
                 break;
 
@@ -121,7 +125,9 @@ class DragView extends LinearLayout implements SwipeableView {
                 mDragDistance = getTop();
                 setTranslationY(mDragDistance);
                 mIsInitialized = true;
-                checkChildrenDistance();
+                if(mSettlePointResourceId != -1){
+                    mIntermmediateDistance = findViewById(mSettlePointResourceId).getRight();
+                }
                 moveToInitial();
                 break;
 
@@ -185,77 +191,12 @@ class DragView extends LinearLayout implements SwipeableView {
         }
     }
 
-    @Override
-    public void onSwipe() {
-        mIntermmediateDistance += getNextChildDistance();
-    }
-
-    @Override
-    public void onClose() {
-        mChildIndex = 0;
-        mIntermmediateDistance = getNextChildDistance();
-        mIsFullyOpened = false;
-    }
-
-    @Override
-    public void onFullSwipe() {
-        mIntermmediateDistance = mDragDistance;
-        mChildIndex = mDistances != null ? mDistances.length - 1 : 0;
-        mIsFullyOpened = true;
-    }
-
     int getDragDistance() {
         return mDragDistance;
     }
 
     int getIntermmediateDistance() {
         return mIntermmediateDistance;
-    }
-
-    void addViewToDrag(View child) {
-        this.addView(child);
-        checkChildrenDistance();
-    }
-
-    private void checkChildrenDistance() {
-        mChildIndex = 0;
-        mDistances = new int[this.getChildCount()];
-
-        for (int i = 0; i < this.getChildCount(); i++) {
-            View child = this.getChildAt(i);
-            int childDistance;
-            if (mViewPosition == LEFT_DRAG_VIEW || mViewPosition == RIGHT_DRAG_VIEW) {
-                childDistance = child.getWidth();
-            } else {
-                childDistance = getHeight();
-            }
-            mDistances[i] = childDistance;
-        }
-
-        mIntermmediateDistance = getNextChildDistance();
-    }
-
-    private int getNextChildDistance() {
-        int nextDistance = 0;
-
-        if (mDistances == null) {
-            return 0;
-        }
-
-        if (mDistances.length > 0 && mChildIndex < mDistances.length) {
-            nextDistance = mDistances[mChildIndex];
-        }
-
-        mChildIndex++;
-        return nextDistance;
-    }
-
-    boolean isAllChildrenVisible() {
-        return mChildIndex > mDistances.length;
-    }
-
-    boolean isDragFullyOpened() {
-        return mIsFullyOpened;
     }
 
     void setDraggable(boolean canDrag) {
@@ -272,5 +213,13 @@ class DragView extends LinearLayout implements SwipeableView {
 
     public int getViewPosition() {
         return mViewPosition;
+    }
+
+    public boolean isBouncePossible() {
+        return mBouncePossible;
+    }
+
+    public void setBouncePossible(boolean bouncePossible) {
+        mBouncePossible = bouncePossible;
     }
 }

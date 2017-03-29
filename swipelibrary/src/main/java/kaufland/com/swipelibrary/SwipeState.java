@@ -35,12 +35,5 @@ public class SwipeState {
         Log.e("test", mState.name());
     }
 
-    public boolean isSettled() {
-        return isSettled;
-    }
-
-    public void setSettled(boolean settled) {
-        isSettled = settled;
-    }
 
 }
