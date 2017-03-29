@@ -76,4 +76,44 @@ public class LeftDragViewEngine implements DragViewEngine {
                 break;
         }
     }
+
+    @Override
+    public int getWidth() {
+        return mDragView.getWidth();
+    }
+
+    @Override
+    public int getDragDistance() {
+        return mDragDistance;
+    }
+
+    @Override
+    public void forceLayout() {
+        mDragView.forceLayout();
+    }
+
+    @Override
+    public boolean isBouncePossible() {
+        return mDragView.isBouncePossible();
+    }
+
+    @Override
+    public int getId() {
+        return mDragView.getId();
+    }
+
+    @Override
+    public boolean isDraggable() {
+        return mDragView.isDraggable();
+    }
+
+    @Override
+    public int getIntermmediateDistance() {
+        return mIntermmediateDistance;
+    }
+
+    @Override
+    public DragView getDragView() {
+        return mDragView;
+    }
 }

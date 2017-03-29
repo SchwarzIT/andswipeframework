@@ -1,12 +1,8 @@
 package kaufland.com.swipelibrary;
 
-import android.view.View;
-
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
 import static kaufland.com.swipelibrary.SwipeLayout.LEFT_DRAG_VIEW;
-import static kaufland.com.swipelibrary.SwipeLayout.LEFT_FULL_AUTO_OPEN_TRESHOLD;
 import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_DRAG_VIEW;
-import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_FULL_AUTO_OPEN_TRESHOLD;
 
 
 public class SwipeUtil {
@@ -20,8 +16,8 @@ public class SwipeUtil {
         float absDiffY = Math.abs(y1 - y2);
         float diffX = x2 - x1;
         float diffY = y2 - y1;
-        boolean isLeftDraggable = layouter.getDragViewByPosition(LEFT_DRAG_VIEW) != null ? layouter.getDragViewByPosition(LEFT_DRAG_VIEW).isDraggable() : false;
-        boolean isRightDraggable = layouter.getDragViewByPosition(RIGHT_DRAG_VIEW) != null ? layouter.getDragViewByPosition(RIGHT_DRAG_VIEW).isDraggable() : false;
+        boolean isLeftDraggable = layouter.getDragViewEngineByPosition(LEFT_DRAG_VIEW) != null ? layouter.getDragViewEngineByPosition(LEFT_DRAG_VIEW).isDraggable() : false;
+        boolean isRightDraggable = layouter.getDragViewEngineByPosition(RIGHT_DRAG_VIEW) != null ? layouter.getDragViewEngineByPosition(RIGHT_DRAG_VIEW).isDraggable() : false;
 
         if (layouter.getDragDirection() == HORIZONTAL) {
             if (diffX > 0) {

@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import kaufland.com.swipelibrary.dragengine.DragViewEngine;
+import kaufland.com.swipelibrary.dragengine.LeftDragViewEngine;
+import kaufland.com.swipelibrary.dragengine.RightDragViewEngine;
 
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL;
@@ -62,7 +64,7 @@ public class SwipeViewLayouter {
             View child = parent.getChildAt(i);
 
             if (child instanceof DragView) {
-                mDragViews.put(((DragView) child).getViewPosition(), (DragView) child);
+                mDragViews.put(((DragView) child).getViewPosition(), createDragViewEngine((DragView) child));
                 mDragDirection = ((DragView) child).getViewPosition() <= 2 ? HORIZONTAL : VERTICAL;
             } else if (child instanceof SurfaceView) {
                 mSurfaceView = (SurfaceView) child;
@@ -82,6 +84,17 @@ public class SwipeViewLayouter {
 
     }
 
+    private DragViewEngine createDragViewEngine(DragView child) {
+
+        switch (child.getViewPosition()){
+            case LEFT_DRAG_VIEW:
+                return new LeftDragViewEngine(child);
+            case RIGHT_DRAG_VIEW:
+                return new RightDragViewEngine(child);
+        }
+        return null;
+    }
+
     public void initInitialPosition(Rect surfaceRect) {
 
         for (DragViewEngine dragView : mDragViews.values()) {
@@ -96,7 +109,7 @@ public class SwipeViewLayouter {
         return mDragDirection;
     }
 
-    public DragViewEngine getDragViewByPosition(int position) {
+    public DragViewEngine getDragViewEngineByPosition(int position) {
         return mDragViews.get(position);
     }
 
@@ -124,27 +137,6 @@ public class SwipeViewLayouter {
             view.restoreState(state, mSurfaceView);
         }
         mSurfaceView.requestLayout();
-    }
-
-    public DragView findViewBySwipeDirection(int distance) {
-
-        if (mDragDirection == HORIZONTAL) {
-            if (distance < 0) {
-                return getDragViewByPosition(RIGHT_DRAG_VIEW);
-            } else if (distance > 0) {
-                return getDragViewByPosition(LEFT_DRAG_VIEW);
-            }
-        }
-
-        return null;
-    }
-
-    public boolean isDirectionSwipeable(float startX, float endX, SwipeViewLayouter layouter) {
-        float diffX = endX - startX;
-
-        DragView view = findViewBySwipeDirection((int) diffX);
-
-        return (view != null && view.isDraggable()) || (diffX <= 0 ? layouter.getSurfaceView().getLeft() > 0 : layouter.getSurfaceView().getLeft() < 0);
     }
 
     public boolean isInitilized() {

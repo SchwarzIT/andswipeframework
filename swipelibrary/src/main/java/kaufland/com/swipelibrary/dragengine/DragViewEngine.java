@@ -3,6 +3,7 @@ package kaufland.com.swipelibrary.dragengine;
 import android.graphics.Rect;
 import android.view.View;
 
+import kaufland.com.swipelibrary.DragView;
 import kaufland.com.swipelibrary.SurfaceView;
 import kaufland.com.swipelibrary.SwipeState;
 import kaufland.com.swipelibrary.SwipeViewLayouter;
@@ -16,8 +17,25 @@ public interface DragViewEngine {
     void moveView(float offset, SurfaceView view, View changedView);
 
     void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation);
+
     void moveToInitial();
+
     void restoreState(SwipeState.DragViewState state, SurfaceView view);
 
+    int getWidth();
 
+    DragView getDragView();
+
+
+    int getDragDistance();
+
+    void forceLayout();
+
+    boolean isBouncePossible();
+
+    int getId();
+
+    boolean isDraggable();
+
+    int getIntermmediateDistance();
 }

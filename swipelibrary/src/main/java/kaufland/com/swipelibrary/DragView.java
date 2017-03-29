@@ -64,7 +64,7 @@ public class DragView extends LinearLayout {
         mDraggable = canDrag;
     }
 
-    boolean isDraggable() {
+    public boolean isDraggable() {
         return mDraggable;
     }
 
