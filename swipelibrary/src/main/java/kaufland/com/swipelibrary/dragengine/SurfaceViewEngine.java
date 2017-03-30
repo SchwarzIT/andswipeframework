@@ -54,6 +54,10 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
         }
     }
 
+    private boolean isMinimumDifReached(int distanceToNextState, SwipeDirectionDetector detector){
+        return Math.abs(distanceToNextState / 2) <= Math.abs(detector.getDifX()) && Math.abs(detector.getDifX()) > Math.abs(detector.getDifY());
+    }
+
     @Override
     public SwipeResult determineSwipeHorizontalState(float velocity, SwipeDirectionDetector swipeDirectionDetector, SwipeState swipeState, final SwipeLayout.SwipeListener mSwipeListener, View releasedChild) {
 
@@ -65,7 +69,7 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
         if (swipeState.getState() == SwipeState.DragViewState.CLOSED) {
             if (swipeDirection == SWIPE_DIRECTION_RIGHT) {
-                if (!getDragViewForEngine(mLeftDragViewEngine).isDraggable()) {
+                if (!getDragViewForEngine(mLeftDragViewEngine).isDraggable() || !isMinimumDifReached(mLeftDragViewEngine.getIntermmediateDistance(), swipeDirectionDetector)) {
                     return new SwipeResult(0);
                 }
 
@@ -87,7 +91,7 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
                 }
 
             } else if (swipeDirection == SWIPE_DIRECTION_LEFT) {
-                if (!getDragViewForEngine(mRightDragViewEngine).isDraggable()) {
+                if (!getDragViewForEngine(mRightDragViewEngine).isDraggable() || !isMinimumDifReached(mRightDragViewEngine.getIntermmediateDistance(), swipeDirectionDetector)) {
                     return new SwipeResult(0);
                 }
 

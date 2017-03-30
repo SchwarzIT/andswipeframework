@@ -102,7 +102,7 @@ public class SwipeLayout extends FrameLayout {
             case MotionEvent.ACTION_DOWN:
 
                 mDragHelper.abort();
-                mSwipeDirectionDetector.onActionDown(ev.getX());
+                mSwipeDirectionDetector.onActionDown(ev.getX(), ev.getY());
                 mDownX = ev.getX();
                 mDownY = ev.getY();
                 mDragHelper.processTouchEvent(ev);
@@ -113,10 +113,6 @@ public class SwipeLayout extends FrameLayout {
                 float moveY = ev.getY();
 
                 boolean canSwipe = mDraggingProxy.canSwipe(mDownX, mDownY, moveX, moveY, mSwipeState.getState());
-
-//                if (!mViewLayouter.isDirectionSwipeable(mDownX, moveX, mViewLayouter)) {
-//                    return false;
-//                }
 
                 mDragAllowed = canSwipe;
                 mIsDragging = true;
@@ -130,7 +126,7 @@ public class SwipeLayout extends FrameLayout {
 
             case MotionEvent.ACTION_UP:
 
-                mSwipeDirectionDetector.onActionUp(ev.getX());
+                mSwipeDirectionDetector.onActionUp(ev.getX(), ev.getY());
                 mIsDragging = false;
 
 

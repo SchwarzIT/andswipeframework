@@ -12,20 +12,28 @@ public class SwipeDirectionDetector {
 
     private int xUp;
 
+    private int yDown;
+
+    private int yUp;
+
     public static final int SWIPE_DIRECTION_LEFT = 1;
 
     public static final int SWIPE_DIRECTION_RIGHT = 2;
 
-    public void onActionDown(float x) {
+    public void onActionDown(float x, float y) {
         xDown = (int) x;
     }
 
-    public void onActionUp(float x) {
+    public void onActionUp(float x, float y) {
         xUp = (int) x;
     }
 
     public int getDifX() {
         return xDown - xUp;
+    }
+
+    public int getDifY() {
+        return yDown - yUp;
     }
 
     public int getSwipeDirection(){
