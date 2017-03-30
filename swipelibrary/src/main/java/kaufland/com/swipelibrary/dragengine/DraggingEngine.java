@@ -21,27 +21,13 @@ public interface DraggingEngine<T extends View> {
 
     void initializePosition(SwipeViewLayouter.DragDirection orientation);
 
-    void moveToInitial();
-
     int clampViewPositionHorizontal(View child, int left);
-
 
     void restoreState(SwipeState.DragViewState state, SurfaceView view);
 
-    int getWidth();
-
     T getDragView();
 
-
     int getDragDistance();
-
-    void forceLayout();
-
-    boolean isBouncePossible();
-
-    int getId();
-
-    boolean isDraggable();
 
     int getIntermmediateDistance();
 

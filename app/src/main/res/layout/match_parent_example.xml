@@ -13,7 +13,6 @@
         <kaufland.com.swipelibrary.DragView_
             android:layout_width="match_parent"
             android:layout_weight="0.33"
-            android:alpha="0.4"
             app:bouncePossible="true"
             app:position="RIGHT_DRAG_VIEW"
 
@@ -38,7 +37,6 @@
             android:layout_width="match_parent"
             android:paddingTop="20dp"
             android:layout_weight="0.33"
-            android:alpha="0.4"
             android:paddingBottom="20dp"
             android:background="@android:color/holo_red_light"
             android:layout_height="match_parent">
@@ -52,7 +50,6 @@
         <kaufland.com.swipelibrary.DragView_
             android:layout_width="wrap_content"
             android:layout_weight="0.33"
-            android:alpha="0.4"
             app:position="LEFT_DRAG_VIEW"
             android:background="@android:color/darker_gray"
             app:bouncePossible="true"

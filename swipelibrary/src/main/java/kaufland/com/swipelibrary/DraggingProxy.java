@@ -34,7 +34,7 @@ public class DraggingProxy {
 
 
     public void requestLayout() {
-        for (DraggingEngine dragView : mSwipeViewLayouter.getViewEngines().values()) {
+        for (View dragView : mSwipeViewLayouter.getViews().values()) {
             dragView.forceLayout();
         }
     }
@@ -80,6 +80,7 @@ public class DraggingProxy {
 
         for (DraggingEngine view : mSwipeViewLayouter.getViewEngines().values()) {
             view.restoreState(state, (SurfaceView)  mSwipeViewLayouter.getViews().get(SURFACE_VIEW));
+            view.getDragView().requestLayout();
         }
     }
 
@@ -107,8 +108,8 @@ public class DraggingProxy {
         float absDiffY = Math.abs(y1 - y2);
         float diffX = x2 - x1;
         float diffY = y2 - y1;
-        boolean isLeftDraggable = mSwipeViewLayouter.getDragViewEngineByPosition(LEFT_DRAG_VIEW) != null ? mSwipeViewLayouter.getDragViewEngineByPosition(LEFT_DRAG_VIEW).isDraggable() : false;
-        boolean isRightDraggable = mSwipeViewLayouter.getDragViewEngineByPosition(RIGHT_DRAG_VIEW) != null ? mSwipeViewLayouter.getDragViewEngineByPosition(RIGHT_DRAG_VIEW).isDraggable() : false;
+        boolean isLeftDraggable = mSwipeViewLayouter.getDragViewEngineByPosition(LEFT_DRAG_VIEW) != null ? ((DragView)mSwipeViewLayouter.getViews().get(LEFT_DRAG_VIEW)).isDraggable() : false;
+        boolean isRightDraggable = mSwipeViewLayouter.getDragViewEngineByPosition(RIGHT_DRAG_VIEW) != null ? ((DragView)mSwipeViewLayouter.getViews().get(RIGHT_DRAG_VIEW)).isDraggable() : false;
 
         if (mSwipeViewLayouter.getDragDirection() == HORIZONTAL) {
             if (diffX > 0) {

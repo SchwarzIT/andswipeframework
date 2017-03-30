@@ -51,8 +51,7 @@ public class LeftDragViewEngine implements DraggingEngine {
         moveToInitial();
     }
 
-    @Override
-    public void moveToInitial() {
+    private void moveToInitial() {
         mDragView.setX(mInitialXPos);
     }
 
@@ -96,34 +95,10 @@ public class LeftDragViewEngine implements DraggingEngine {
         }
     }
 
-    @Override
-    public int getWidth() {
-        return mDragView.getWidth();
-    }
 
     @Override
     public int getDragDistance() {
         return mDragDistance;
-    }
-
-    @Override
-    public void forceLayout() {
-        mDragView.forceLayout();
-    }
-
-    @Override
-    public boolean isBouncePossible() {
-        return mDragView.isBouncePossible();
-    }
-
-    @Override
-    public int getId() {
-        return mDragView.getId();
-    }
-
-    @Override
-    public boolean isDraggable() {
-        return mDragView.isDraggable();
     }
 
     @Override

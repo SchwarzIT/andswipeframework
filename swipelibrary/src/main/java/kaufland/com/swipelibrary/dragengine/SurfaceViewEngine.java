@@ -1,8 +1,8 @@
 package kaufland.com.swipelibrary.dragengine;
 
-import android.graphics.Rect;
 import android.view.View;
 
+import kaufland.com.swipelibrary.DragView;
 import kaufland.com.swipelibrary.SurfaceView;
 import kaufland.com.swipelibrary.SwipeDirectionDetector;
 import kaufland.com.swipelibrary.SwipeLayout;
@@ -30,9 +30,9 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
     private SurfaceView mSurfaceView;
 
-    private DraggingEngine mLeftDragView;
+    private DraggingEngine mLeftDragViewEngine;
 
-    private DraggingEngine mRightDragView;
+    private DraggingEngine mRightDragViewEngine;
 
     public SurfaceViewEngine(SwipeViewLayouter layouter) {
         mLayouter = layouter;
@@ -45,12 +45,12 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
             return;
         }
 
-        if(changedView.equals(mLeftDragView.getDragView())){
-            mSurfaceView.setX(mLeftDragView.getDragView().getX() + mLeftDragView.getWidth());
+        if(changedView.equals(mLeftDragViewEngine.getDragView())){
+            mSurfaceView.setX(mLeftDragViewEngine.getDragView().getX() + mLeftDragViewEngine.getDragView().getWidth());
         }
 
-        if(changedView.equals(mRightDragView.getDragView())){
-            mSurfaceView.setX(mRightDragView.getDragView().getX() - mSurfaceView.getWidth());
+        if(changedView.equals(mRightDragViewEngine.getDragView())){
+            mSurfaceView.setX(mRightDragViewEngine.getDragView().getX() - mSurfaceView.getWidth());
         }
     }
 
@@ -65,46 +65,46 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
         if (swipeState.getState() == SwipeState.DragViewState.CLOSED) {
             if (swipeDirection == SWIPE_DIRECTION_RIGHT) {
-                if (!mLeftDragView.isDraggable()) {
+                if (!getDragViewForEngine(mLeftDragViewEngine).isDraggable()) {
                     return new SwipeResult(0);
                 }
 
                 swipeState.setState(SwipeState.DragViewState.LEFT_OPEN);
-                if (velocity > LEFT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(swipeDirectionDetector.getDifX()) > (mLeftDragView.getDragDistance() / 2)) {
-                    return new SwipeResult(mLeftDragView.getDragDistance(), new Runnable() {
+                if (velocity > LEFT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(swipeDirectionDetector.getDifX()) > (mLeftDragViewEngine.getDragDistance() / 2)) {
+                    return new SwipeResult(mLeftDragViewEngine.getDragDistance(), new Runnable() {
                         @Override
                         public void run() {
                             mSwipeListener.onSwipeOpened(LEFT_OPEN, true);
                         }
                     });
                 } else {
-                    return new SwipeResult(mLeftDragView.getIntermmediateDistance(), new Runnable() {
+                    return new SwipeResult(mLeftDragViewEngine.getIntermmediateDistance(), new Runnable() {
                         @Override
                         public void run() {
-                            mSwipeListener.onSwipeOpened(LEFT_OPEN, mLeftDragView.getIntermmediateDistance() == mLeftDragView.getDragDistance());
+                            mSwipeListener.onSwipeOpened(LEFT_OPEN, mLeftDragViewEngine.getIntermmediateDistance() == mLeftDragViewEngine.getDragDistance());
                         }
                     });
                 }
 
             } else if (swipeDirection == SWIPE_DIRECTION_LEFT) {
-                if (!mRightDragView.isDraggable()) {
+                if (!getDragViewForEngine(mRightDragViewEngine).isDraggable()) {
                     return new SwipeResult(0);
                 }
 
                 swipeState.setState(RIGHT_OPEN);
 
-                if (velocity < RIGHT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(swipeDirectionDetector.getDifX()) > (mRightDragView.getDragDistance() / 2)) {
-                    return new SwipeResult(-mRightDragView.getDragDistance(), new Runnable() {
+                if (velocity < RIGHT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(swipeDirectionDetector.getDifX()) > (mRightDragViewEngine.getDragDistance() / 2)) {
+                    return new SwipeResult(-mRightDragViewEngine.getDragDistance(), new Runnable() {
                         @Override
                         public void run() {
                             mSwipeListener.onSwipeOpened(RIGHT_OPEN, true);
                         }
                     });
                 } else {
-                    return new SwipeResult(-mRightDragView.getIntermmediateDistance(), new Runnable() {
+                    return new SwipeResult(-mRightDragViewEngine.getIntermmediateDistance(), new Runnable() {
                         @Override
                         public void run() {
-                            mSwipeListener.onSwipeOpened(RIGHT_OPEN, mRightDragView.getIntermmediateDistance() == mRightDragView.getDragDistance());
+                            mSwipeListener.onSwipeOpened(RIGHT_OPEN, mRightDragViewEngine.getIntermmediateDistance() == mRightDragViewEngine.getDragDistance());
                         }
                     });
                 }
@@ -113,7 +113,7 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
             if (swipeDirection == SWIPE_DIRECTION_RIGHT) {
                 swipeState.setState(LEFT_OPEN);
 
-                return new SwipeResult(mLeftDragView.getIntermmediateDistance(), new Runnable() {
+                return new SwipeResult(mLeftDragViewEngine.getIntermmediateDistance(), new Runnable() {
                     @Override
                     public void run() {
                         mSwipeListener.onBounce(LEFT_OPEN);
@@ -142,18 +142,18 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
             } else if (swipeDirection == SWIPE_DIRECTION_LEFT) {
                 swipeState.setState(RIGHT_OPEN);
-                if (velocity < RIGHT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(swipeDirectionDetector.getDifX()) > (mRightDragView.getDragDistance() / 2)) {
-                    return new SwipeResult(-mRightDragView.getDragDistance(), new Runnable() {
+                if (velocity < RIGHT_FULL_AUTO_OPEN_TRESHOLD || Math.abs(swipeDirectionDetector.getDifX()) > (mRightDragViewEngine.getDragDistance() / 2)) {
+                    return new SwipeResult(-mRightDragViewEngine.getDragDistance(), new Runnable() {
                         @Override
                         public void run() {
                             mSwipeListener.onSwipeOpened(RIGHT_OPEN, true);
                         }
                     });
                 } else {
-                    return new SwipeResult(-mRightDragView.getIntermmediateDistance(), new Runnable() {
+                    return new SwipeResult(-mRightDragViewEngine.getIntermmediateDistance(), new Runnable() {
                         @Override
                         public void run() {
-                            mSwipeListener.onSwipeOpened(RIGHT_OPEN, mRightDragView.getIntermmediateDistance() == mRightDragView.getDragDistance());
+                            mSwipeListener.onSwipeOpened(RIGHT_OPEN, mRightDragViewEngine.getIntermmediateDistance() == mRightDragViewEngine.getDragDistance());
                         }
                     });
                 }
@@ -169,27 +169,22 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
         mSurfaceView = mLayouter.getSurfaceView();
 
-        mLeftDragView = mLayouter.getDragViewEngineByPosition(SwipeLayout.LEFT_DRAG_VIEW);
-        mRightDragView = mLayouter.getDragViewEngineByPosition(SwipeLayout.RIGHT_DRAG_VIEW);
-    }
-
-    @Override
-    public void moveToInitial() {
-        mLayouter.getSurfaceView().setX(0);
+        mLeftDragViewEngine = mLayouter.getDragViewEngineByPosition(SwipeLayout.LEFT_DRAG_VIEW);
+        mRightDragViewEngine = mLayouter.getDragViewEngineByPosition(SwipeLayout.RIGHT_DRAG_VIEW);
     }
 
     @Override
     public int clampViewPositionHorizontal(View child, int left) {
-        boolean isOutsideRightRangeAndBounceNotPossible = left < - mRightDragView.getDragDistance() && !mRightDragView.isBouncePossible();
-        boolean isOutsideLeftRangeAndBounceNotPossible = left > mRightDragView.getDragDistance() && !mRightDragView.isBouncePossible();
+        boolean isOutsideRightRangeAndBounceNotPossible = left < - mRightDragViewEngine.getDragDistance() && !getDragViewForEngine(mRightDragViewEngine).isBouncePossible();
+        boolean isOutsideLeftRangeAndBounceNotPossible = left > mLeftDragViewEngine.getDragDistance() && !getDragViewForEngine(mLeftDragViewEngine).isBouncePossible();
 
 
         if (isOutsideLeftRangeAndBounceNotPossible) {
-            return mRightDragView.getDragDistance();
+            return mLeftDragViewEngine.getDragDistance();
         }
 
         if(isOutsideRightRangeAndBounceNotPossible){
-            return mRightDragView.getDragDistance();
+            return mRightDragViewEngine.getDragDistance();
         }
 
 
@@ -199,55 +194,34 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
     @Override
     public void restoreState(SwipeState.DragViewState state, SurfaceView view) {
-        //TODO
-//        switch (state) {
-//            case LEFT_OPEN:
-//                moveToInitial();
-//                break;
-//            case RIGHT_OPEN:
-//                moveView(mDragDistance, view, null);
-//                break;
-//            case TOP_OPEN:
-//                //TODO Implementation
-//                break;
-//            case BOTTOM_OPEN:
-//                //TODO Implementation
-//                break;
-//            default:
-//
-//                moveToInitial();
-//                break;
-//        }
+
+        switch (state) {
+            case LEFT_OPEN:
+                mSurfaceView.offsetLeftAndRight(mLeftDragViewEngine.getDragDistance());
+                break;
+            case RIGHT_OPEN:
+                mSurfaceView.offsetLeftAndRight(-mRightDragViewEngine.getDragDistance());
+                break;
+            case TOP_OPEN:
+                //TODO Implementation
+                break;
+            case BOTTOM_OPEN:
+                //TODO Implementation
+                break;
+            default:
+                mSurfaceView.offsetLeftAndRight(0);
+                break;
+        }
     }
 
-    @Override
-    public int getWidth() {
-        return mSurfaceView.getWidth();
+    private DragView getDragViewForEngine(DraggingEngine engine){
+        return (DragView) engine.getDragView();
     }
+
 
     @Override
     public int getDragDistance() {
         return 0;
-    }
-
-    @Override
-    public void forceLayout() {
-        mSurfaceView.forceLayout();
-    }
-
-    @Override
-    public boolean isBouncePossible() {
-        return false;
-    }
-
-    @Override
-    public int getId() {
-        return mSurfaceView.getId();
-    }
-
-    @Override
-    public boolean isDraggable() {
-        return false;
     }
 
     @Override

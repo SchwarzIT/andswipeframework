@@ -53,14 +53,13 @@ public class RightDragViewEngine implements DraggingEngine {
         moveToInitial();
     }
 
-    @Override
-    public void moveToInitial() {
+    private void moveToInitial() {
         mDragView.setX(mInitialXPos);
     }
 
     @Override
     public int clampViewPositionHorizontal(View child, int left) {
-        if (left < (mSurfaceView.getWidth() - getDragDistance()) && !isBouncePossible()) {
+        if (left < (mSurfaceView.getWidth() - getDragDistance()) && !mDragView.isBouncePossible()) {
             return mSurfaceView.getWidth() - getDragDistance();
         }
 
@@ -89,34 +88,10 @@ public class RightDragViewEngine implements DraggingEngine {
         }
     }
 
-    @Override
-    public int getWidth() {
-        return mDragView.getWidth();
-    }
 
     @Override
     public int getDragDistance() {
         return mDragDistance;
-    }
-
-    @Override
-    public void forceLayout() {
-        mDragView.forceLayout();
-    }
-
-    @Override
-    public boolean isBouncePossible() {
-        return mDragView.isBouncePossible();
-    }
-
-    @Override
-    public int getId() {
-        return mDragView.getId();
-    }
-
-    @Override
-    public boolean isDraggable() {
-        return mDragView.isDraggable();
     }
 
     @Override
