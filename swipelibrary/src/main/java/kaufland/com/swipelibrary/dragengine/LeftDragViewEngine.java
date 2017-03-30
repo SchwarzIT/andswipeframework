@@ -29,9 +29,10 @@ public class LeftDragViewEngine implements DraggingEngine {
 
     private int mIntermmediateDistance;
 
-    public LeftDragViewEngine(DragView dragView, SurfaceView surfaceView) {
-        mDragView = dragView;
-        mSurfaceView = surfaceView;
+    private SwipeViewLayouter mLayouter;
+
+    public LeftDragViewEngine(SwipeViewLayouter layouter) {
+        mLayouter = layouter;
     }
 
     @Override
@@ -43,6 +44,9 @@ public class LeftDragViewEngine implements DraggingEngine {
 
     @Override
     public void initializePosition(SwipeViewLayouter.DragDirection orientation) {
+
+        mSurfaceView = mLayouter.getSurfaceView();
+        mDragView = mLayouter.getLeftDragView();
 
         mInitialXPos = (int) (mSurfaceView.getX() - mDragView.getWidth());
         mDragDistance = mDragView.getWidth();
@@ -75,12 +79,10 @@ public class LeftDragViewEngine implements DraggingEngine {
     public void restoreState(SwipeState.DragViewState state, SurfaceView view) {
         switch (state) {
             case LEFT_OPEN:
-                moveView(mDragDistance, view, null);
+                mDragView.offsetLeftAndRight(0);
                 break;
             case RIGHT_OPEN:
-
-                moveToInitial();
-
+                mDragView.offsetLeftAndRight((int) (mLayouter.getRightDragView().getX() - mSurfaceView.getWidth() - mDragView.getWidth()));
                 break;
             case TOP_OPEN:
                 //TODO Implementation
@@ -89,8 +91,7 @@ public class LeftDragViewEngine implements DraggingEngine {
                 //TODO Implementation
                 break;
             default:
-
-                moveToInitial();
+                mDragView.offsetLeftAndRight(-mDragDistance);
                 break;
         }
     }
@@ -104,6 +105,11 @@ public class LeftDragViewEngine implements DraggingEngine {
     @Override
     public int getIntermmediateDistance() {
         return mIntermmediateDistance;
+    }
+
+    @Override
+    public int getOpenOffset() {
+        return mDragDistance;
     }
 
     @Override

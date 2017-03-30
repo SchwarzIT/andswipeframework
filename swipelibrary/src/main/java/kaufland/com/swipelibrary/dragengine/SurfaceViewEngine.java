@@ -55,7 +55,7 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
     }
 
     private boolean isMinimumDifReached(int distanceToNextState, SwipeDirectionDetector detector){
-        return Math.abs(distanceToNextState / 2) <= Math.abs(detector.getDifX()) && Math.abs(detector.getDifX()) > Math.abs(detector.getDifY());
+        return Math.abs(distanceToNextState / 2) <= Math.abs(detector.getDifX()) && Math.abs(detector.getDifX()) > Math.abs(detector.getDifY()) && !detector.isHorizontalScrollChangedWhileDragging();
     }
 
     @Override
@@ -125,6 +125,7 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
                 });
 
             } else if (swipeDirection == SWIPE_DIRECTION_LEFT) {
+
                 swipeState.setState(CLOSED);
                 return new SwipeResult(0, new Runnable() {
                     @Override
@@ -230,6 +231,11 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
     @Override
     public int getIntermmediateDistance() {
+        return 0;
+    }
+
+    @Override
+    public int getOpenOffset() {
         return 0;
     }
 

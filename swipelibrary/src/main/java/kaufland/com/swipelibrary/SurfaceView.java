@@ -17,8 +17,6 @@ import org.androidannotations.annotations.EViewGroup;
 @EViewGroup
 public class SurfaceView extends FrameLayout {
 
-    private Rect mSurfaceRectHit;
-
     public SurfaceView(Context context) {
         super(context);
     }
@@ -36,33 +34,10 @@ public class SurfaceView extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation) {
-        setX(surfaceRect.left);
-        setY(surfaceRect.top);
-        getLayoutParams().width = surfaceRect.width();
-        getLayoutParams().height = surfaceRect.height();
-        requestLayout();
-    }
-
     @Override
     protected void dispatchDraw(Canvas canvas) {
         bringToFront();
         super.dispatchDraw(canvas);
-    }
-
-    private void initSwipe() {
-
-        mSurfaceRectHit = new Rect();
-        getHitRect(mSurfaceRectHit);
-
-    }
-
-    public void moveView(float offset) {
-        setX(offset);
-    }
-
-    public void moveToInitial() {
-        setX(0);
     }
 
 }

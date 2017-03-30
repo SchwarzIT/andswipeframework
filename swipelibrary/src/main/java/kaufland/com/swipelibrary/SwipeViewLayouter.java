@@ -62,9 +62,9 @@ public class SwipeViewLayouter {
 
             switch (key){
                 case LEFT_DRAG_VIEW:
-                    mViewEngines.put(LEFT_DRAG_VIEW, new LeftDragViewEngine((DragView) mViews.get(LEFT_DRAG_VIEW), (SurfaceView) mViews.get(SURFACE_VIEW)));
+                    mViewEngines.put(LEFT_DRAG_VIEW, new LeftDragViewEngine(this));
                 case RIGHT_DRAG_VIEW:
-                    mViewEngines.put(RIGHT_DRAG_VIEW, new RightDragViewEngine((DragView) mViews.get(RIGHT_DRAG_VIEW), (SurfaceView) mViews.get(SURFACE_VIEW)));
+                    mViewEngines.put(RIGHT_DRAG_VIEW, new RightDragViewEngine(this));
                 case SURFACE_VIEW:
                     mViewEngines.put(SURFACE_VIEW, new SurfaceViewEngine(this));
             }
@@ -102,5 +102,12 @@ public class SwipeViewLayouter {
         return (SurfaceView) mViews.get(SURFACE_VIEW);
     }
 
+    public DragView getLeftDragView() {
+        return (DragView) mViews.get(LEFT_DRAG_VIEW);
+    }
+
+    public DragView getRightDragView() {
+        return (DragView) mViews.get(RIGHT_DRAG_VIEW);
+    }
 
 }

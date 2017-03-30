@@ -20,6 +20,7 @@ import static kaufland.com.swipelibrary.SwipeState.DragViewState.CLOSED;
 
 public class RightDragViewEngine implements DraggingEngine {
 
+    private final SwipeViewLayouter mLayouter;
     private DragView mDragView;
 
     private SurfaceView mSurfaceView;
@@ -30,9 +31,8 @@ public class RightDragViewEngine implements DraggingEngine {
 
     private int mIntermmediateDistance;
 
-    public RightDragViewEngine(DragView dragView, SurfaceView surfaceView) {
-        mDragView = dragView;
-        mSurfaceView = surfaceView;
+    public RightDragViewEngine(SwipeViewLayouter layouter) {
+        mLayouter = layouter;
     }
 
     @Override
@@ -46,6 +46,8 @@ public class RightDragViewEngine implements DraggingEngine {
     @Override
     public void initializePosition(SwipeViewLayouter.DragDirection orientation) {
 
+        mDragView = (DragView) mLayouter.getViews().get(SwipeLayout.RIGHT_DRAG_VIEW);
+        mSurfaceView = mLayouter.getSurfaceView();
         mDragDistance = mDragView.getWidth();
         mInitialXPos = (int) (mSurfaceView.getX() + mDragView.getWidth());
         mIntermmediateDistance = mDragView.getSettlePointResourceId() != -1 ? mDragView.findViewById(mDragView.getSettlePointResourceId()).getRight() : mDragView.getWidth();
@@ -70,10 +72,11 @@ public class RightDragViewEngine implements DraggingEngine {
     public void restoreState(SwipeState.DragViewState state, SurfaceView view) {
         switch (state) {
             case LEFT_OPEN:
-                moveToInitial();
+
+                mDragView.offsetLeftAndRight(mLayouter.getLeftDragView().getWidth() + mSurfaceView.getWidth());
                 break;
             case RIGHT_OPEN:
-                moveView(mDragDistance, view, null);
+                mDragView.offsetLeftAndRight(0);
                 break;
             case TOP_OPEN:
                 //TODO Implementation
@@ -83,7 +86,7 @@ public class RightDragViewEngine implements DraggingEngine {
                 break;
             default:
 
-                moveToInitial();
+                mDragView.offsetLeftAndRight(mSurfaceView.getWidth());
                 break;
         }
     }
@@ -117,5 +120,10 @@ public class RightDragViewEngine implements DraggingEngine {
     @Override
     public DragView getDragView() {
         return mDragView;
+    }
+
+    @Override
+    public int getOpenOffset() {
+        return -mDragDistance;
     }
 }

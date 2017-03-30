@@ -75,10 +75,6 @@ public class MainActivity extends AppCompatActivity
             getFragmentManager().beginTransaction().replace(R.id.content_main, new EasyExample()).commit();
         } else if (id == R.id.nav_recycler_with_restore) {
             getFragmentManager().beginTransaction().replace(R.id.content_main, new RecylerViewWithRestoreFragment()).commit();
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
         } else if (id == R.id.nav_share) {
 
         }

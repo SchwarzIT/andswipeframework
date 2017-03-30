@@ -12,6 +12,7 @@ import kaufland.com.swipelibrary.dragengine.DraggingEngine;
 import static kaufland.com.swipelibrary.SwipeLayout.LEFT_DRAG_VIEW;
 import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_DRAG_VIEW;
 import static kaufland.com.swipelibrary.SwipeLayout.SURFACE_VIEW;
+import static kaufland.com.swipelibrary.SwipeState.DragViewState.LEFT_OPEN;
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
 
 /**
@@ -80,7 +81,7 @@ public class DraggingProxy {
 
         for (DraggingEngine view : mSwipeViewLayouter.getViewEngines().values()) {
             view.restoreState(state, (SurfaceView)  mSwipeViewLayouter.getViews().get(SURFACE_VIEW));
-            view.getDragView().requestLayout();
+            view.getDragView().forceLayout();
         }
     }
 
@@ -125,5 +126,13 @@ public class DraggingProxy {
 
     public boolean isInitilized() {
         return isInitilized;
+    }
+
+    public View getSurfaceView() {
+        return mSwipeViewLayouter.getSurfaceView();
+    }
+
+    public int getSurfaceOpenOffsetByDragView(int dragView) {
+       return mSwipeViewLayouter.getViewEngines().get(dragView).getOpenOffset();
     }
 }

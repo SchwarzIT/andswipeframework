@@ -1,5 +1,8 @@
 package kaufland.com.swipelibrary;
 
+import android.graphics.Rect;
+import android.view.ViewTreeObserver;
+
 import org.androidannotations.annotations.EBean;
 
 /**
@@ -20,12 +23,24 @@ public class SwipeDirectionDetector {
 
     public static final int SWIPE_DIRECTION_RIGHT = 2;
 
-    public void onActionDown(float x, float y) {
+    private Rect downRect;
+    private Rect upRect;
+
+
+    public void onActionDown(float x, float y, final SwipeLayout swipeLayout) {
         xDown = (int) x;
+        yDown = (int) y;
+
+        downRect = new Rect();
+        swipeLayout.getGlobalVisibleRect(downRect);
     }
 
-    public void onActionUp(float x, float y) {
+    public void onActionUp(float x, float y, final SwipeLayout swipeLayout) {
         xUp = (int) x;
+        yUp = (int) y;
+
+        upRect = new Rect();
+        swipeLayout.getGlobalVisibleRect(upRect);
     }
 
     public int getDifX() {
@@ -40,5 +55,7 @@ public class SwipeDirectionDetector {
       return   getDifX() < 0 ? SWIPE_DIRECTION_RIGHT : SWIPE_DIRECTION_LEFT;
     }
 
-
+    public boolean isHorizontalScrollChangedWhileDragging() {
+        return downRect == null || upRect == null || downRect.top != upRect.top;
+    }
 }

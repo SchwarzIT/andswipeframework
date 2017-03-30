@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import org.androidannotations.annotations.Bean;
@@ -102,7 +103,7 @@ public class SwipeLayout extends FrameLayout {
             case MotionEvent.ACTION_DOWN:
 
                 mDragHelper.abort();
-                mSwipeDirectionDetector.onActionDown(ev.getX(), ev.getY());
+                mSwipeDirectionDetector.onActionDown(ev.getX(), ev.getY(), this);
                 mDownX = ev.getX();
                 mDownY = ev.getY();
                 mDragHelper.processTouchEvent(ev);
@@ -126,7 +127,7 @@ public class SwipeLayout extends FrameLayout {
 
             case MotionEvent.ACTION_UP:
 
-                mSwipeDirectionDetector.onActionUp(ev.getX(), ev.getY());
+                mSwipeDirectionDetector.onActionUp(ev.getX(), ev.getY(), this);
                 mIsDragging = false;
 
 
@@ -221,13 +222,13 @@ public class SwipeLayout extends FrameLayout {
 
 
     public void smoothSlideTo(float slideOffset) {
-        //TODO Schaffeeee!!!
-//        int leftOffset = mDraggingProxy.getDragDirection() == HORIZONTAL ? (int) slideOffset : 0;
-//        int topOffset = mDraggingProxy.getDragDirection() == VERTICAL ? (int) slideOffset : 0;
-//
-//        if (mDragHelper.smoothSlideViewTo(mViewLayouter.getSurfaceView(), leftOffset, topOffset)) {
-//            ViewCompat.postInvalidateOnAnimation(this);
-//        }
+
+        int leftOffset = mDraggingProxy.getDragDirection() == HORIZONTAL ? (int) slideOffset : 0;
+        int topOffset = mDraggingProxy.getDragDirection() == VERTICAL ? (int) slideOffset : 0;
+
+        if (mDragHelper.smoothSlideViewTo(mDraggingProxy.getSurfaceView(), leftOffset, topOffset)) {
+            ViewCompat.postInvalidateOnAnimation(this);
+        }
     }
 
     @Override
@@ -265,8 +266,10 @@ public class SwipeLayout extends FrameLayout {
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
+
             return mDraggingProxy.isCapturedViewDraggable(child);
         }
+
 
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
@@ -355,47 +358,28 @@ public class SwipeLayout extends FrameLayout {
     }
 
     public void openSwipe(final int position, boolean notifyCallback) {
-//
-//        DragView mDragViewByPosition = mViewLayouter.getDragViewEngineByPosition(position);
-//        mDragViewByPosition.moveView(mDragViewByPosition.getDragDistance());
-//
-//        switch (position) {
-//            case LEFT_DRAG_VIEW:
-//                if (mLeftDragView != null) {
-//                    smoothSlideTo(mLeftDragView.getDragDistance());
-//                    mSwipeState.setState(LEFT_OPEN);
-//                }
-//                break;
-//
-//            case RIGHT_DRAG_VIEW:
-//                if (mRightDragView != null) {
-//                    smoothSlideTo(-mRightDragView.getDragDistance());
-//                    mSwipeState.setState(SwipeState.DragViewState.RIGHT_OPEN);
-//                }
-//                break;
-//
-//            case TOP_DRAG_VIEW:
-//                if (mTopDragView != null) {
-//                    smoothSlideTo(mTopDragView.getDragDistance());
-//                    mSwipeState.setState(SwipeState.DragViewState.TOP_OPEN);
-//                }
-//                break;
-//
-//            case BOTTOM_DRAG_VIEW:
-//                if (mBottomDragView != null) {
-//                    smoothSlideTo(-mBottomDragView.getDragDistance());
-//                    mSwipeState.setState(SwipeState.DragViewState.BOTTOM_OPEN);
-//                }
-//                break;
-//
-//            default:
-//                return;
-//        }
-//
-//        if (mSwipeListener != null && notifyCallback) {
-//            notifySwipeOpened();
-//        }
-        //TODO Schaffee!!!
+
+        int mSurfaceOpenOffsetByDragView = mDraggingProxy.getSurfaceOpenOffsetByDragView(position);
+
+        switch (position) {
+            case LEFT_DRAG_VIEW:
+                mSwipeState.setState(LEFT_OPEN);
+                smoothSlideTo(mSurfaceOpenOffsetByDragView);
+                break;
+
+            case RIGHT_DRAG_VIEW:
+                mSwipeState.setState(RIGHT_OPEN);
+                smoothSlideTo(mSurfaceOpenOffsetByDragView);
+                break;
+
+            default:
+                return;
+        }
+
+
+        if (mSwipeListener != null && notifyCallback) {
+            notifySwipeOpened();
+        }
     }
 
     public void openSwipe(final int position) {

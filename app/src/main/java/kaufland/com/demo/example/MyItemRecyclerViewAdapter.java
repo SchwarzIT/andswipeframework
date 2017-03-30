@@ -41,7 +41,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        holder.mSwipeLayout.markForRestoreOnDraw(SwipeState.DragViewState.CLOSED);
+        holder.mSwipeLayout.markForRestoreOnDraw(SwipeState.DragViewState.LEFT_OPEN);
     }
 
     @Override

@@ -60,7 +60,7 @@ public class DragView extends LinearLayout {
         return mSettlePointResourceId;
     }
 
-    void setDraggable(boolean canDrag) {
+    public void setDraggable(boolean canDrag) {
         mDraggable = canDrag;
     }
 

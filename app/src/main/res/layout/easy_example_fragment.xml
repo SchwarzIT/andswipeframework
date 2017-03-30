@@ -13,6 +13,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="kaufland.com.demo.MainActivity">
 
+
     <kaufland.com.swipelibrary.SwipeLayout_
         android:layout_width="200dp"
         android:id="@+id/example_1"
@@ -66,10 +67,44 @@
 
 
 
-
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/example_2"
         layout="@layout/match_parent_example" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:text="open left"
+        android:layout_toRightOf="@+id/example_1"
+        android:id="@+id/btn_open_left"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:text="open right"
+        android:id="@+id/btn_open_right"
+        android:layout_toRightOf="@+id/btn_open_left"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:text="close"
+        android:id="@+id/btn_close"
+        android:layout_toRightOf="@+id/btn_open_right"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:text="disable left drag"
+        android:id="@+id/btn_disable_left_drag"
+        android:layout_toRightOf="@+id/btn_open_right"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:text="disable left drag"
+        android:id="@+id/btn_disable_right_drag"
+        android:layout_toRightOf="@+id/btn_open_right"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

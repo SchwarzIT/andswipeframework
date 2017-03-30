@@ -31,5 +31,7 @@ public interface DraggingEngine<T extends View> {
 
     int getIntermmediateDistance();
 
+    int getOpenOffset();
+
     SwipeResult determineSwipeHorizontalState(float velocity, SwipeDirectionDetector swipeDirectionDetector, SwipeState swipeState, SwipeLayout.SwipeListener swipeListener, View releasedChild);
 }
