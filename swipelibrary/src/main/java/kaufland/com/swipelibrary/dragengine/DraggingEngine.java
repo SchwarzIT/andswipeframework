@@ -5,6 +5,9 @@ import android.view.View;
 
 import kaufland.com.swipelibrary.DragView;
 import kaufland.com.swipelibrary.SurfaceView;
+import kaufland.com.swipelibrary.SwipeDirectionDetector;
+import kaufland.com.swipelibrary.SwipeLayout;
+import kaufland.com.swipelibrary.SwipeResult;
 import kaufland.com.swipelibrary.SwipeState;
 import kaufland.com.swipelibrary.SwipeViewLayouter;
 
@@ -12,19 +15,22 @@ import kaufland.com.swipelibrary.SwipeViewLayouter;
  * Created by sbra0902 on 29.03.17.
  */
 
-public interface DragViewEngine {
+public interface DraggingEngine<T extends View> {
 
     void moveView(float offset, SurfaceView view, View changedView);
 
-    void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation);
+    void initializePosition(SwipeViewLayouter.DragDirection orientation);
 
     void moveToInitial();
+
+    int clampViewPositionHorizontal(View child, int left);
+
 
     void restoreState(SwipeState.DragViewState state, SurfaceView view);
 
     int getWidth();
 
-    DragView getDragView();
+    T getDragView();
 
 
     int getDragDistance();
@@ -38,4 +44,6 @@ public interface DragViewEngine {
     boolean isDraggable();
 
     int getIntermmediateDistance();
+
+    SwipeResult determineSwipeHorizontalState(float velocity, SwipeDirectionDetector swipeDirectionDetector, SwipeState swipeState, SwipeLayout.SwipeListener swipeListener, View releasedChild);
 }

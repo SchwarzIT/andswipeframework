@@ -19,10 +19,6 @@ public class SurfaceView extends FrameLayout {
 
     private Rect mSurfaceRectHit;
 
-    private int mSurfaceViewOffsetX;
-
-    private int mSurfaceViewOffsetY;
-
     public SurfaceView(Context context) {
         super(context);
     }
@@ -69,19 +65,4 @@ public class SurfaceView extends FrameLayout {
         setX(0);
     }
 
-    public int getSurfaceViewOffsetX() {
-        return mSurfaceViewOffsetX;
-    }
-
-    public void setSurfaceViewOffsetX(int surfaceViewOffsetX) {
-        mSurfaceViewOffsetX = surfaceViewOffsetX;
-    }
-
-    public int getSurfaceViewOffsetY() {
-        return mSurfaceViewOffsetY;
-    }
-
-    public void setSurfaceViewOffsetY(int surfaceViewOffsetY) {
-        mSurfaceViewOffsetY = surfaceViewOffsetY;
-    }
 }

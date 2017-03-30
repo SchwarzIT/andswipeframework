@@ -83,4 +83,6 @@ public class DragView extends LinearLayout {
     public void setBouncePossible(boolean bouncePossible) {
         mBouncePossible = bouncePossible;
     }
+
+
 }

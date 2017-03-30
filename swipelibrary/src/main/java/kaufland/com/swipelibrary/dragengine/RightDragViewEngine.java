@@ -5,19 +5,24 @@ import android.view.View;
 
 import kaufland.com.swipelibrary.DragView;
 import kaufland.com.swipelibrary.SurfaceView;
+import kaufland.com.swipelibrary.SwipeDirectionDetector;
+import kaufland.com.swipelibrary.SwipeLayout;
+import kaufland.com.swipelibrary.SwipeResult;
 import kaufland.com.swipelibrary.SwipeState;
 import kaufland.com.swipelibrary.SwipeViewLayouter;
 
-import static kaufland.com.swipelibrary.SwipeLayout.LEFT_DRAG_VIEW;
-import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_DRAG_VIEW;
+import static kaufland.com.swipelibrary.SwipeDirectionDetector.SWIPE_DIRECTION_RIGHT;
+import static kaufland.com.swipelibrary.SwipeState.DragViewState.CLOSED;
 
 /**
  * Created by sbra0902 on 29.03.17.
  */
 
-public class RightDragViewEngine implements DragViewEngine {
+public class RightDragViewEngine implements DraggingEngine {
 
     private DragView mDragView;
+
+    private SurfaceView mSurfaceView;
 
     private int mInitialXPos;
 
@@ -25,8 +30,9 @@ public class RightDragViewEngine implements DragViewEngine {
 
     private int mIntermmediateDistance;
 
-    public RightDragViewEngine(DragView dragView) {
+    public RightDragViewEngine(DragView dragView, SurfaceView surfaceView) {
         mDragView = dragView;
+        mSurfaceView = surfaceView;
     }
 
     @Override
@@ -34,16 +40,14 @@ public class RightDragViewEngine implements DragViewEngine {
 
         if (!mDragView.equals(changedView)) {
             mDragView.setX(view.getX() + mDragView.getWidth());
-        } else {
-            view.moveView(mDragView.getX() - view.getWidth());
         }
     }
 
     @Override
-    public void initializePosition(Rect surfaceRect, SwipeViewLayouter.DragDirection orientation) {
+    public void initializePosition(SwipeViewLayouter.DragDirection orientation) {
 
         mDragDistance = mDragView.getWidth();
-        mInitialXPos = surfaceRect.right + mDragView.getWidth();
+        mInitialXPos = (int) (mSurfaceView.getX() + mDragView.getWidth());
         mIntermmediateDistance = mDragView.getSettlePointResourceId() != -1 ? mDragView.findViewById(mDragView.getSettlePointResourceId()).getRight() : mDragView.getWidth();
 
         moveToInitial();
@@ -52,6 +56,15 @@ public class RightDragViewEngine implements DragViewEngine {
     @Override
     public void moveToInitial() {
         mDragView.setX(mInitialXPos);
+    }
+
+    @Override
+    public int clampViewPositionHorizontal(View child, int left) {
+        if (left < (mSurfaceView.getWidth() - getDragDistance()) && !isBouncePossible()) {
+            return mSurfaceView.getWidth() - getDragDistance();
+        }
+
+        return left;
     }
 
     @Override
@@ -109,6 +122,21 @@ public class RightDragViewEngine implements DragViewEngine {
     @Override
     public int getIntermmediateDistance() {
         return mIntermmediateDistance;
+    }
+
+    @Override
+    public SwipeResult determineSwipeHorizontalState(float velocity, SwipeDirectionDetector swipeDirectionDetector, SwipeState swipeState, final SwipeLayout.SwipeListener swipeListener, View releasedChild) {
+        if (releasedChild.equals(getDragView()) && swipeDirectionDetector.getSwipeDirection() == SWIPE_DIRECTION_RIGHT) {
+            swipeState.setState(SwipeState.DragViewState.CLOSED);
+            return new SwipeResult(mSurfaceView.getWidth(), new Runnable() {
+                @Override
+                public void run() {
+                    swipeListener.onSwipeClosed(CLOSED);
+                }
+            });
+        }
+
+        return null;
     }
 
     @Override
