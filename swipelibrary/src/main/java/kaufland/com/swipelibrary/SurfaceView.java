@@ -4,9 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.annotation.Px;
 import android.support.annotation.RequiresApi;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import org.androidannotations.annotations.EViewGroup;
@@ -39,5 +41,4 @@ public class SurfaceView extends FrameLayout {
         bringToFront();
         super.dispatchDraw(canvas);
     }
-
 }

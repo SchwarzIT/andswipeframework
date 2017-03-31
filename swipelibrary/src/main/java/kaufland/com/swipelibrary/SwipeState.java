@@ -30,9 +30,7 @@ public class SwipeState {
     }
 
     public void setState(DragViewState mState) {
-
         this.mState = mState;
-        Log.e("test", mState.name());
     }
 
 

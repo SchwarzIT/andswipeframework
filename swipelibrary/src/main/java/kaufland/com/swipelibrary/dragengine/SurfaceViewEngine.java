@@ -202,10 +202,10 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
         switch (state) {
             case LEFT_OPEN:
-                mSurfaceView.offsetLeftAndRight(mLeftDragViewEngine.getDragDistance());
+                mSurfaceView.setX(mLeftDragViewEngine.getDragDistance());
                 break;
             case RIGHT_OPEN:
-                mSurfaceView.offsetLeftAndRight(-mRightDragViewEngine.getDragDistance());
+                mSurfaceView.setX(-mRightDragViewEngine.getDragDistance());
                 break;
             case TOP_OPEN:
                 //TODO Implementation
@@ -214,7 +214,7 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
                 //TODO Implementation
                 break;
             default:
-                mSurfaceView.offsetLeftAndRight(0);
+                mSurfaceView.setX(0);
                 break;
         }
     }

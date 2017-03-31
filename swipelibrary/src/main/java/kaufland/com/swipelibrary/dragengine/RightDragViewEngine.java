@@ -73,10 +73,11 @@ public class RightDragViewEngine implements DraggingEngine {
         switch (state) {
             case LEFT_OPEN:
 
-                mDragView.offsetLeftAndRight(mLayouter.getLeftDragView().getWidth() + mSurfaceView.getWidth());
+//                mDragView.offsetLeftAndRight(mLayouter.getLeftDragView().getWidth() + mSurfaceView.getWidth());
+                mDragView.setX(mLayouter.getLeftDragView().getWidth() + mSurfaceView.getWidth());
                 break;
             case RIGHT_OPEN:
-                mDragView.offsetLeftAndRight(0);
+                mDragView.setX(0);
                 break;
             case TOP_OPEN:
                 //TODO Implementation
@@ -86,7 +87,7 @@ public class RightDragViewEngine implements DraggingEngine {
                 break;
             default:
 
-                mDragView.offsetLeftAndRight(mSurfaceView.getWidth());
+                mDragView.setX(mSurfaceView.getWidth());
                 break;
         }
     }

@@ -7,6 +7,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -239,6 +240,7 @@ public class SwipeLayout extends FrameLayout {
         if (mDragHelper.continueSettling(true)) {
             ViewCompat.postInvalidateOnAnimation(this);
         }
+
     }
 
     @Override
@@ -249,16 +251,26 @@ public class SwipeLayout extends FrameLayout {
         if (!mDraggingProxy.isInitilized()) {
             mDraggingProxy.init(this);
         }
+
         if (mRestoreOnDraw) {
-            restoreOnDraw();
-            mRestoreOnDraw = false;
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    mDraggingProxy.restoreState(mSwipeState.getState());
+                    mRestoreOnDraw = false;
+                }
+            });
+
         }
+
 
     }
 
     private class SwipeDragViewHelper extends ViewDragHelper.Callback {
 
         private ViewGroup parent;
+
+        private int xBeforeDrag;
 
         SwipeDragViewHelper(ViewGroup parent) {
             this.parent = parent;
@@ -267,6 +279,7 @@ public class SwipeLayout extends FrameLayout {
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
 
+            xBeforeDrag = (int) child.getX();
             return mDraggingProxy.isCapturedViewDraggable(child);
         }
 
@@ -290,7 +303,11 @@ public class SwipeLayout extends FrameLayout {
                 throw new InvalidParameterException("VerticalSwipeNotImplemented");
             } else if (mDraggingProxy.getDragDirection() == SwipeViewLayouter.DragDirection.HORIZONTAL) {
 
-                final SwipeResult swipeResult = mDraggingProxy.determineSwipeHorizontalState(xvel, mSwipeDirectionDetector, mSwipeState, mSwipeListener, releasedChild);
+                SwipeResult swipeResult = new SwipeResult(xBeforeDrag);
+
+                if (!mSwipeDirectionDetector.isHorizontalScrollChangedWhileDragging()) {
+                    swipeResult = mDraggingProxy.determineSwipeHorizontalState(xvel, mSwipeDirectionDetector, mSwipeState, mSwipeListener, releasedChild);
+                }
 
                 if (mDragHelper.smoothSlideViewTo(releasedChild, swipeResult.getSettleX(), 0)) {
                     ViewCompat.postInvalidateOnAnimation(parent);
@@ -345,11 +362,9 @@ public class SwipeLayout extends FrameLayout {
     public void markForRestoreOnDraw(SwipeState.DragViewState swipeState) {
         mSwipeState.setState(swipeState);
         mRestoreOnDraw = true;
-    }
-
-    private void restoreOnDraw() {
-
-        mDraggingProxy.restoreState(mSwipeState.getState());
+        if(mDragHelper.getViewDragState() != KDragViewHelper.STATE_IDLE){
+            mDragHelper.abort();
+        }
     }
 
     public void closeSwipeNoAnimation() {
