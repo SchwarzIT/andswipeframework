@@ -1,10 +1,18 @@
+[![](https://jitpack.io/v/Kaufland/andswipeframework.svg)](https://jitpack.io/#Kaufland/andswipeframework)
+
 # andswipeframework
 just another swipe library 
 
 
 ## Demo
 
-TODO
+Just a small and easy example
+
+![](https://picload.org/image/rcgacaow/ezgif-1-5d03bcbd53.gif)
+
+Recyclerview with restore swipe state on rebind
+
+![](https://picload.org/image/rcgacalr/ezgif-1-25d9364a97.gif)
 
 
 ## Features
