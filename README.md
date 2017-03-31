@@ -1,4 +1,5 @@
 [![](https://jitpack.io/v/Kaufland/andswipeframework.svg)](https://jitpack.io/#Kaufland/andswipeframework)
+[![Build Status](https://travis-ci.org/Kaufland/andswipeframework.svg?branch=master)](https://travis-ci.org/Kaufland/andswipeframework)
 
 # andswipeframework
 just another swipe library 
