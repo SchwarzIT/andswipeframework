@@ -39,7 +39,6 @@ public class SwipeLayout extends FrameLayout {
 
     private static final String TAG = SwipeLayout.class.getSimpleName();
 
-
     @Bean
     protected SwipeState mSwipeState;
 
@@ -64,8 +63,6 @@ public class SwipeLayout extends FrameLayout {
     private float mDownY;
 
     private float mDragHelperTouchSlop;
-
-    private Rect mSurfaceRectHit;
 
 
     public interface SwipeListener {

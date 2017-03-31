@@ -13,7 +13,9 @@ import kaufland.com.demo.example.dummy.DummyContent.DummyItem;
 import kaufland.com.swipelibrary.SwipeLayout;
 import kaufland.com.swipelibrary.SwipeState;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Handler;
 
 /**
@@ -25,6 +27,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+
+    private Map<Integer, SwipeState.DragViewState> mStateReminder = new HashMap<>();
 
     public MyItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -39,9 +43,25 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.mSwipeLayout.markForRestoreOnDraw(SwipeState.DragViewState.LEFT_OPEN);
+        holder.mSwipeLayout.markForRestoreOnDraw(mStateReminder.containsKey(position) ? mStateReminder.get(position) : SwipeState.DragViewState.CLOSED);
+        holder.mSwipeLayout.setSwipeListener(new SwipeLayout.SwipeListener() {
+            @Override
+            public void onSwipeOpened(SwipeState.DragViewState openedDragView, boolean isFullSwipe) {
+                mStateReminder.put(position, openedDragView);
+            }
+
+            @Override
+            public void onSwipeClosed(SwipeState.DragViewState dragViewState) {
+                mStateReminder.put(position, dragViewState);
+            }
+
+            @Override
+            public void onBounce(SwipeState.DragViewState dragViewState) {
+
+            }
+        });
     }
 
     @Override

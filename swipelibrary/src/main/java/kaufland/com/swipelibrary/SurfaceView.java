@@ -35,10 +35,4 @@ public class SurfaceView extends FrameLayout {
     public SurfaceView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
-
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        bringToFront();
-        super.dispatchDraw(canvas);
-    }
 }

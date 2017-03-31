@@ -72,8 +72,6 @@ public class RightDragViewEngine implements DraggingEngine {
     public void restoreState(SwipeState.DragViewState state, SurfaceView view) {
         switch (state) {
             case LEFT_OPEN:
-
-//                mDragView.offsetLeftAndRight(mLayouter.getLeftDragView().getWidth() + mSurfaceView.getWidth());
                 mDragView.setX(mLayouter.getLeftDragView().getWidth() + mSurfaceView.getWidth());
                 break;
             case RIGHT_OPEN:
