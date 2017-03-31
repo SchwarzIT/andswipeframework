@@ -188,14 +188,14 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
         } else {
             boolean isOutsideRightRangeAndBounceNotPossible = left < -mRightDragViewEngine.getDragDistance() && !getDragViewForEngine(mRightDragViewEngine).isBouncePossible();
             if (isOutsideRightRangeAndBounceNotPossible) {
-                return mRightDragViewEngine.getDragDistance();
+                return -mRightDragViewEngine.getDragDistance();
             }
         }
 
 
         if (mLeftDragViewEngine == null) {
-            if (left >= mSurfaceView.getWidth()) {
-                return 0;
+            if (left <= -mRightDragViewEngine.getDragDistance()) {
+                return -mRightDragViewEngine.getDragDistance();
             }
         } else {
             boolean isOutsideLeftRangeAndBounceNotPossible = left > mLeftDragViewEngine.getDragDistance() && !getDragViewForEngine(mLeftDragViewEngine).isBouncePossible();

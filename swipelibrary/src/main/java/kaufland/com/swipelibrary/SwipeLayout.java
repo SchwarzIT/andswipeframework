@@ -58,10 +58,6 @@ public class SwipeLayout extends FrameLayout {
 
     private boolean mSwipeEnabled = true;
 
-    private float mDownX;
-
-    private float mDownY;
-
     private float mDragHelperTouchSlop;
 
 
@@ -102,19 +98,20 @@ public class SwipeLayout extends FrameLayout {
 
                 mDragHelper.abort();
                 mSwipeDirectionDetector.onActionDown(ev.getX(), ev.getY(), this);
-                mDownX = ev.getX();
-                mDownY = ev.getY();
                 mDragHelper.processTouchEvent(ev);
                 return true;
 
             case MotionEvent.ACTION_MOVE:
-                float moveX = ev.getX();
-                float moveY = ev.getY();
+                mSwipeDirectionDetector.onAction(ev.getX(), ev.getY());
 
-                boolean canSwipe = mDraggingProxy.canSwipe(mDownX, mDownY, moveX, moveY, mSwipeState.getState());
+                boolean canSwipe = mDraggingProxy.canSwipe(mSwipeDirectionDetector, mSwipeState.getState());
 
                 mDragAllowed = canSwipe;
-                mIsDragging = true;
+
+                boolean isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector.getDifX());
+                if (!isClick) {
+                    mIsDragging = true;
+                }
 
                 if (mIsDragging && mDragAllowed) {
                     getParent().requestDisallowInterceptTouchEvent(true);
@@ -145,22 +142,16 @@ public class SwipeLayout extends FrameLayout {
 
             case MotionEvent.ACTION_CANCEL:
                 mIsDragging = false;
-                float lastX = ev.getX();
-                float lastY = ev.getY();
 
-//                boolean swipeable = SwipeUtil.canSwipe(mDownX, mDownY, lastX, lastY, mSwipeState.getState(), mViewLayouter);
-//                if (swipeable) {
                 mDragHelper.processTouchEvent(ev);
-//                } else {
-//                    mDragHelper.cancel();
-//                }
+
                 break;
 
             default:
                 mDragHelper.processTouchEvent(ev);
         }
 
-        return mDragAllowed;
+        return mIsDragging;
     }
 
     @Override
@@ -173,24 +164,23 @@ public class SwipeLayout extends FrameLayout {
 
         final int action = MotionEventCompat.getActionMasked(ev);
 
-        final float x = ev.getX();
-        final float y = ev.getY();
-
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                mSwipeDirectionDetector.onActionDown(ev.getX(), ev.getY(), this);
                 mDragHelper.abort();
                 mDragHelper.processTouchEvent(ev);
-                mDownX = x;
-                mDownY = y;
                 mIsDragging = false;
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                mDragHelper.processTouchEvent(ev);
 
-                float point = mDraggingProxy.getDragDirection() == HORIZONTAL ? x : y;
-                float oldPoint = mDraggingProxy.getDragDirection() == HORIZONTAL ? mDownX : mDownY;
-                boolean isClick = mDragHelperTouchSlop > Math.abs(point - oldPoint);
+                try {
+                    mDragHelper.processTouchEvent(ev);
+                } catch (IllegalArgumentException e) {
+                    // https://code.google.com/p/android/issues/detail?id=64553
+                }
+
+                boolean isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector.getDifX());
 
                 if (!mIsDragging && isClick) {
                     return false;
@@ -207,15 +197,13 @@ public class SwipeLayout extends FrameLayout {
 
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                mIsDragging = false;
-                float diffX = Math.abs(mDownX - ev.getX());
-                float diffY = Math.abs(mDownY - ev.getY());
 
+                mIsDragging = false;
                 mDragHelper.processTouchEvent(ev);
                 break;
         }
 
-        return mDragHelper.shouldInterceptTouchEvent(ev);
+        return mIsDragging;
     }
 
 
@@ -359,7 +347,7 @@ public class SwipeLayout extends FrameLayout {
     public void markForRestoreOnDraw(SwipeState.DragViewState swipeState) {
         mSwipeState.setState(swipeState);
         mRestoreOnDraw = true;
-        if(mDragHelper.getViewDragState() != KDragViewHelper.STATE_IDLE){
+        if (mDragHelper.getViewDragState() != KDragViewHelper.STATE_IDLE) {
             mDragHelper.abort();
         }
     }

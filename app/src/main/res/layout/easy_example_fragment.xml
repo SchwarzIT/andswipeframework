@@ -67,7 +67,7 @@
 
 
     <kaufland.com.swipelibrary.SwipeLayout_
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:id="@+id/example_optional"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
@@ -77,7 +77,7 @@
         android:layout_alignParentStart="true">
 
         <kaufland.com.swipelibrary.DragView_
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             app:position="LEFT_DRAG_VIEW"
             android:alpha="0.4"
             android:background="@android:color/darker_gray"
@@ -90,8 +90,9 @@
                 android:text="-"/>
 
             <TextView
-                android:layout_width="50dp"
+                android:layout_width="20dp"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:id="@+id/txt_quantity"
                 android:text="0"/>
 

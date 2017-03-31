@@ -13,6 +13,7 @@ import kaufland.com.swipelibrary.SwipeViewLayouter;
 
 import static kaufland.com.swipelibrary.SwipeDirectionDetector.SWIPE_DIRECTION_RIGHT;
 import static kaufland.com.swipelibrary.SwipeState.DragViewState.CLOSED;
+import static kaufland.com.swipelibrary.SwipeState.DragViewState.RIGHT_OPEN;
 
 /**
  * Created by sbra0902 on 29.03.17.
@@ -39,7 +40,7 @@ public class RightDragViewEngine implements DraggingEngine {
     public void moveView(float offset, SurfaceView view, View changedView) {
 
         if (!mDragView.equals(changedView)) {
-            mDragView.setX(view.getX() + mDragView.getWidth());
+            mDragView.setX(view.getX() + mSurfaceView.getWidth());
         }
     }
 
@@ -49,7 +50,7 @@ public class RightDragViewEngine implements DraggingEngine {
         mDragView = (DragView) mLayouter.getViews().get(SwipeLayout.RIGHT_DRAG_VIEW);
         mSurfaceView = mLayouter.getSurfaceView();
         mDragDistance = mDragView.getWidth();
-        mInitialXPos = (int) (mSurfaceView.getX() + mDragView.getWidth());
+        mInitialXPos = (int) (mSurfaceView.getX() + mSurfaceView.getWidth());
         mIntermmediateDistance = mDragView.getSettlePointResourceId() != -1 ? mDragView.findViewById(mDragView.getSettlePointResourceId()).getRight() : mDragView.getWidth();
 
         moveToInitial();
@@ -103,12 +104,20 @@ public class RightDragViewEngine implements DraggingEngine {
 
     @Override
     public SwipeResult determineSwipeHorizontalState(float velocity, SwipeDirectionDetector swipeDirectionDetector, SwipeState swipeState, final SwipeLayout.SwipeListener swipeListener, View releasedChild) {
-        if (releasedChild.equals(getDragView()) && swipeDirectionDetector.getSwipeDirection() == SWIPE_DIRECTION_RIGHT) {
+        if (releasedChild.equals(getDragView()) && swipeDirectionDetector.getSwipeDirection() == SWIPE_DIRECTION_RIGHT && Math.abs(swipeDirectionDetector.getDifX()) > (getDragDistance() / 2)) {
             swipeState.setState(SwipeState.DragViewState.CLOSED);
             return new SwipeResult(mSurfaceView.getWidth(), new Runnable() {
                 @Override
                 public void run() {
                     swipeListener.onSwipeClosed(CLOSED);
+                }
+            });
+        }else if(releasedChild.equals(getDragView())){
+            swipeState.setState(RIGHT_OPEN);
+            return new SwipeResult(mSurfaceView.getWidth() - getDragDistance(), new Runnable() {
+                @Override
+                public void run() {
+                    swipeListener.onSwipeClosed(RIGHT_OPEN);
                 }
             });
         }

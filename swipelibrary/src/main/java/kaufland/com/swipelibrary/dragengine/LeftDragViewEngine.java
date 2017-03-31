@@ -115,7 +115,7 @@ public class LeftDragViewEngine implements DraggingEngine {
 
     @Override
     public SwipeResult determineSwipeHorizontalState(float velocity, SwipeDirectionDetector swipeDirectionDetector, SwipeState swipeState, final SwipeLayout.SwipeListener swipeListener, View releasedChild) {
-        if (mDragView.equals(releasedChild) && swipeDirectionDetector.getSwipeDirection() == SWIPE_DIRECTION_LEFT) {
+        if (mDragView.equals(releasedChild) && swipeDirectionDetector.getSwipeDirection() == SWIPE_DIRECTION_LEFT && Math.abs(swipeDirectionDetector.getDifX()) > (getDragDistance() / 2)) {
             swipeState.setState(SwipeState.DragViewState.CLOSED);
             return new SwipeResult(-mDragView.getWidth(), new Runnable() {
                 @Override

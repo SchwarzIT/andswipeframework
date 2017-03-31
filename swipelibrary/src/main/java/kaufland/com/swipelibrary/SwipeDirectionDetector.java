@@ -36,15 +36,20 @@ public class SwipeDirectionDetector {
     }
 
     public void onActionUp(float x, float y, final SwipeLayout swipeLayout) {
-        xUp = (int) x;
-        yUp = (int) y;
+
+        onAction(x, y);
 
         upRect = new Rect();
         swipeLayout.getGlobalVisibleRect(upRect);
     }
 
+    public void onAction(float x, float y){
+        xUp = (int) x;
+        yUp = (int) y;
+    }
+
     public int getDifX() {
-        return xDown - xUp;
+        return xUp - xDown;
     }
 
     public int getDifY() {
@@ -52,7 +57,7 @@ public class SwipeDirectionDetector {
     }
 
     public int getSwipeDirection(){
-      return   getDifX() < 0 ? SWIPE_DIRECTION_RIGHT : SWIPE_DIRECTION_LEFT;
+      return   getDifX() > 0 ? SWIPE_DIRECTION_RIGHT : SWIPE_DIRECTION_LEFT;
     }
 
     public boolean isHorizontalScrollChangedWhileDragging() {

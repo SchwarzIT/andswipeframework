@@ -38,14 +38,14 @@ public class EasyExample extends Fragment {
         view.findViewById(R.id.btn_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mQuantityTextView.setText(Integer.valueOf(mQuantityTextView.getText().toString()) +1);
+                mQuantityTextView.setText(String.valueOf(Integer.valueOf(mQuantityTextView.getText().toString()) +1));
             }
         });
 
         view.findViewById(R.id.btn_minus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mQuantityTextView.setText(Integer.valueOf(mQuantityTextView.getText().toString()) -1);
+                mQuantityTextView.setText(String.valueOf(Integer.valueOf(mQuantityTextView.getText().toString()) -1));
             }
         });
 

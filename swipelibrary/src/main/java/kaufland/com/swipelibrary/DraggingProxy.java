@@ -101,14 +101,14 @@ public class DraggingProxy {
         return draggable;
     }
 
-    public boolean canSwipe(float x1, float y1, float x2, float y2, SwipeState.DragViewState state) {
+    public boolean canSwipe(SwipeDirectionDetector swipeDirectionDetector, SwipeState.DragViewState state) {
 
         boolean canSwipe = false;
 
-        float absDiffX = Math.abs(x1 - x2);
-        float absDiffY = Math.abs(y1 - y2);
-        float diffX = x2 - x1;
-        float diffY = y2 - y1;
+        float absDiffX = Math.abs(swipeDirectionDetector.getDifX());
+        float absDiffY = Math.abs(swipeDirectionDetector.getDifY());
+        float diffX = swipeDirectionDetector.getDifX();
+        float diffY = swipeDirectionDetector.getDifY();
         boolean isLeftDraggable = mSwipeViewLayouter.getDragViewEngineByPosition(LEFT_DRAG_VIEW) != null ? ((DragView)mSwipeViewLayouter.getViews().get(LEFT_DRAG_VIEW)).isDraggable() : false;
         boolean isRightDraggable = mSwipeViewLayouter.getDragViewEngineByPosition(RIGHT_DRAG_VIEW) != null ? ((DragView)mSwipeViewLayouter.getViews().get(RIGHT_DRAG_VIEW)).isDraggable() : false;
 
@@ -135,4 +135,5 @@ public class DraggingProxy {
     public int getSurfaceOpenOffsetByDragView(int dragView) {
        return mSwipeViewLayouter.getViewEngines().get(dragView).getOpenOffset();
     }
+
 }
