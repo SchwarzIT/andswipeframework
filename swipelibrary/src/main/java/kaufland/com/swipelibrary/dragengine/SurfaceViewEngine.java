@@ -41,27 +41,27 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
     @Override
     public void moveView(float offset, SurfaceView view, View changedView) {
 
-        if(changedView.equals(mSurfaceView)){
+        if (changedView.equals(mSurfaceView)) {
             return;
         }
 
-        if(changedView.equals(mLeftDragViewEngine.getDragView())){
+        if (mLeftDragViewEngine != null && changedView.equals(mLeftDragViewEngine.getDragView())) {
             mSurfaceView.setX(mLeftDragViewEngine.getDragView().getX() + mLeftDragViewEngine.getDragView().getWidth());
         }
 
-        if(changedView.equals(mRightDragViewEngine.getDragView())){
+        if (mRightDragViewEngine != null && changedView.equals(mRightDragViewEngine.getDragView())) {
             mSurfaceView.setX(mRightDragViewEngine.getDragView().getX() - mSurfaceView.getWidth());
         }
     }
 
-    private boolean isMinimumDifReached(int distanceToNextState, SwipeDirectionDetector detector){
+    private boolean isMinimumDifReached(int distanceToNextState, SwipeDirectionDetector detector) {
         return Math.abs(distanceToNextState / 2) <= Math.abs(detector.getDifX()) && Math.abs(detector.getDifX()) > Math.abs(detector.getDifY()) && !detector.isHorizontalScrollChangedWhileDragging();
     }
 
     @Override
     public SwipeResult determineSwipeHorizontalState(float velocity, SwipeDirectionDetector swipeDirectionDetector, SwipeState swipeState, final SwipeLayout.SwipeListener mSwipeListener, View releasedChild) {
 
-        if(!mSurfaceView.equals(releasedChild)){
+        if (!mSurfaceView.equals(releasedChild)) {
             return null;
         }
 
@@ -69,7 +69,7 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
         if (swipeState.getState() == SwipeState.DragViewState.CLOSED) {
             if (swipeDirection == SWIPE_DIRECTION_RIGHT) {
-                if (!getDragViewForEngine(mLeftDragViewEngine).isDraggable() || !isMinimumDifReached(mLeftDragViewEngine.getIntermmediateDistance(), swipeDirectionDetector)) {
+                if (mLeftDragViewEngine == null || !getDragViewForEngine(mLeftDragViewEngine).isDraggable() || !isMinimumDifReached(mLeftDragViewEngine.getIntermmediateDistance(), swipeDirectionDetector)) {
                     return new SwipeResult(0);
                 }
 
@@ -91,7 +91,7 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
                 }
 
             } else if (swipeDirection == SWIPE_DIRECTION_LEFT) {
-                if (!getDragViewForEngine(mRightDragViewEngine).isDraggable() || !isMinimumDifReached(mRightDragViewEngine.getIntermmediateDistance(), swipeDirectionDetector)) {
+                if (mRightDragViewEngine == null || !getDragViewForEngine(mRightDragViewEngine).isDraggable() || !isMinimumDifReached(mRightDragViewEngine.getIntermmediateDistance(), swipeDirectionDetector)) {
                     return new SwipeResult(0);
                 }
 
@@ -180,16 +180,30 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
 
     @Override
     public int clampViewPositionHorizontal(View child, int left) {
-        boolean isOutsideRightRangeAndBounceNotPossible = left < - mRightDragViewEngine.getDragDistance() && !getDragViewForEngine(mRightDragViewEngine).isBouncePossible();
-        boolean isOutsideLeftRangeAndBounceNotPossible = left > mLeftDragViewEngine.getDragDistance() && !getDragViewForEngine(mLeftDragViewEngine).isBouncePossible();
 
-
-        if (isOutsideLeftRangeAndBounceNotPossible) {
-            return mLeftDragViewEngine.getDragDistance();
+        if (mRightDragViewEngine == null) {
+            if (left <= 0) {
+                return 0;
+            }
+        } else {
+            boolean isOutsideRightRangeAndBounceNotPossible = left < -mRightDragViewEngine.getDragDistance() && !getDragViewForEngine(mRightDragViewEngine).isBouncePossible();
+            if (isOutsideRightRangeAndBounceNotPossible) {
+                return mRightDragViewEngine.getDragDistance();
+            }
         }
 
-        if(isOutsideRightRangeAndBounceNotPossible){
-            return mRightDragViewEngine.getDragDistance();
+
+        if (mLeftDragViewEngine == null) {
+            if (left >= mSurfaceView.getWidth()) {
+                return 0;
+            }
+        } else {
+            boolean isOutsideLeftRangeAndBounceNotPossible = left > mLeftDragViewEngine.getDragDistance() && !getDragViewForEngine(mLeftDragViewEngine).isBouncePossible();
+
+
+            if (isOutsideLeftRangeAndBounceNotPossible) {
+                return mLeftDragViewEngine.getDragDistance();
+            }
         }
 
 
@@ -219,8 +233,8 @@ public class SurfaceViewEngine implements DraggingEngine<SurfaceView> {
         }
     }
 
-    private DragView getDragViewForEngine(DraggingEngine engine){
-        return (DragView) engine.getDragView();
+    private DragView getDragViewForEngine(DraggingEngine engine) {
+        return engine != null ? (DragView) engine.getDragView() : null;
     }
 
 

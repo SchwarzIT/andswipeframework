@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import kaufland.com.demo.R;
@@ -30,6 +31,28 @@ public class EasyExample extends Fragment {
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupExample2(view);
+
+        final TextView mQuantityTextView = (TextView) view.findViewById(R.id.txt_quantity);
+
+        view.findViewById(R.id.btn_add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mQuantityTextView.setText(Integer.valueOf(mQuantityTextView.getText().toString()) +1);
+            }
+        });
+
+        view.findViewById(R.id.btn_minus).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mQuantityTextView.setText(Integer.valueOf(mQuantityTextView.getText().toString()) -1);
+            }
+        });
+
+
+    }
+
+    private void setupExample2(final View view) {
         final SwipeLayout mViewById = (SwipeLayout) view.findViewById(R.id.swipe_example_2);
         mViewById.setSwipeListener(new SwipeLayout.SwipeListener() {
             @Override

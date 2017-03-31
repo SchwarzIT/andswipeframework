@@ -66,6 +66,58 @@
     </kaufland.com.swipelibrary.SwipeLayout_>
 
 
+    <kaufland.com.swipelibrary.SwipeLayout_
+        android:layout_width="200dp"
+        android:id="@+id/example_optional"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <kaufland.com.swipelibrary.DragView_
+            android:layout_width="match_parent"
+            app:position="LEFT_DRAG_VIEW"
+            android:alpha="0.4"
+            android:background="@android:color/darker_gray"
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/btn_minus"
+                android:text="-"/>
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:id="@+id/txt_quantity"
+                android:text="0"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/btn_add"
+                android:text="+"/>
+        </kaufland.com.swipelibrary.DragView_>
+
+        <kaufland.com.swipelibrary.SurfaceView_
+            android:layout_width="match_parent"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:alpha="0.4"
+            android:background="@android:color/holo_red_light"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello World!"/>
+
+        </kaufland.com.swipelibrary.SurfaceView_>
+    </kaufland.com.swipelibrary.SwipeLayout_>
+
+
 
     <include
         android:layout_width="match_parent"

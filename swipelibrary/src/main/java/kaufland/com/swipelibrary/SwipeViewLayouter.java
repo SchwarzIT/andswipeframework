@@ -40,7 +40,7 @@ public class SwipeViewLayouter {
 
         mViewEngines.clear();
 
-        mViews = new HashMap<>();
+        mViews.clear();
 
         for (int i = 0; i < parent.getChildCount(); i++) {
 
@@ -63,21 +63,25 @@ public class SwipeViewLayouter {
             switch (key){
                 case LEFT_DRAG_VIEW:
                     mViewEngines.put(LEFT_DRAG_VIEW, new LeftDragViewEngine(this));
+                    break;
                 case RIGHT_DRAG_VIEW:
                     mViewEngines.put(RIGHT_DRAG_VIEW, new RightDragViewEngine(this));
+                    break;
                 case SURFACE_VIEW:
                     mViewEngines.put(SURFACE_VIEW, new SurfaceViewEngine(this));
+                    break;
             }
-        }
-
-
-        if (mViews.size() <= 1) {
-            throw new InvalidParameterException("SwipeLayout needs at least 1 DragView");
         }
 
         if (!mViews.containsKey(SURFACE_VIEW)) {
             throw new InvalidParameterException("SwipeLayout needs a SurfaceView");
         }
+
+        if (mViews.size() <= 1) {
+            throw new InvalidParameterException("SwipeLayout needs at least 1 DragView");
+        }
+
+
 
 
     }
