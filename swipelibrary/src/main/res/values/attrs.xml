@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DragView">
+        <attr name="settleView" format="reference" />
+        <attr name="position" format="enum">
+            <enum name="LEFT_DRAG_VIEW" value="1"/>
+            <enum name="RIGHT_DRAG_VIEW" value="2"/>
+            <enum name="TOP_DRAG_VIEW" value="3"/>
+            <enum name="BOTTOM_DRAG_VIEW" value="4"/>
+        </attr>
+        <attr name="bouncePossible" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="SwipeLayout">
+        <attr name="drag_direction" format="enum">
+            <enum name="horizontal" value="1"/>
+            <enum name="vertical" value="2"/>
+        </attr>
+    </declare-styleable>
+</resources>
