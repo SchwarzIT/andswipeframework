@@ -4,6 +4,11 @@ buildscript {
     repositories {
         jcenter()
     }
+    ext {
+        androidSupportVersion = '25.0.1'
+        androidBuildToolsVersion = '25.0.1'
+        jUnitVersion = '4.12'
+    }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
 
