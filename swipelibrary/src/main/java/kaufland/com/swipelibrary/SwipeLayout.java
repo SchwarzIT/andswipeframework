@@ -52,8 +52,6 @@ public class SwipeLayout extends FrameLayout {
 
     private SwipeListener mSwipeListener;
 
-    private boolean mIsDragging;
-
     private boolean mDragAllowed;
 
     private boolean mSwipeEnabled = true;
@@ -99,7 +97,7 @@ public class SwipeLayout extends FrameLayout {
                 mDragHelper.abort();
                 mSwipeDirectionDetector.onActionDown(ev.getX(), ev.getY(), this);
                 mDragHelper.processTouchEvent(ev);
-                return true;
+                break;
 
             case MotionEvent.ACTION_MOVE:
                 mSwipeDirectionDetector.onAction(ev.getX(), ev.getY());
@@ -109,11 +107,8 @@ public class SwipeLayout extends FrameLayout {
                 mDragAllowed = canSwipe;
 
                 boolean isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector.getDifX());
-                if (!isClick) {
-                    mIsDragging = true;
-                }
 
-                if (mIsDragging && mDragAllowed) {
+                if (!isClick && mDragAllowed) {
                     getParent().requestDisallowInterceptTouchEvent(true);
                     mDragHelper.processTouchEvent(ev);
                 }
@@ -123,7 +118,6 @@ public class SwipeLayout extends FrameLayout {
             case MotionEvent.ACTION_UP:
 
                 mSwipeDirectionDetector.onActionUp(ev.getX(), ev.getY(), this);
-                mIsDragging = false;
 
 
                 if (ev.getX() < 0 || ev.getY() < 0 || ev.getX() > getMeasuredWidth() || ev.getY() > getMeasuredHeight()) {
@@ -131,7 +125,7 @@ public class SwipeLayout extends FrameLayout {
 
                     ev.setAction(MotionEvent.ACTION_UP);
                     mDragHelper.processTouchEvent(ev);
-                    return false;
+                    return true;
                 }
 
                 if (mDragAllowed) {
@@ -141,7 +135,6 @@ public class SwipeLayout extends FrameLayout {
                 break;
 
             case MotionEvent.ACTION_CANCEL:
-                mIsDragging = false;
 
                 mDragHelper.processTouchEvent(ev);
 
@@ -151,7 +144,7 @@ public class SwipeLayout extends FrameLayout {
                 mDragHelper.processTouchEvent(ev);
         }
 
-        return mIsDragging;
+        return true;
     }
 
     @Override
@@ -169,11 +162,10 @@ public class SwipeLayout extends FrameLayout {
                 mSwipeDirectionDetector.onActionDown(ev.getX(), ev.getY(), this);
                 mDragHelper.abort();
                 mDragHelper.processTouchEvent(ev);
-                mIsDragging = false;
                 break;
 
             case MotionEvent.ACTION_MOVE:
-
+                mSwipeDirectionDetector.onAction(ev.getX(), ev.getY());
                 try {
                     mDragHelper.processTouchEvent(ev);
                 } catch (IllegalArgumentException e) {
@@ -182,15 +174,13 @@ public class SwipeLayout extends FrameLayout {
 
                 boolean isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector.getDifX());
 
-                if (!mIsDragging && isClick) {
-                    return false;
-                }
 
-                if (mIsDragging) {
+                if (!isClick) {
                     ViewParent parent = getParent();
                     if (parent != null) {
                         parent.requestDisallowInterceptTouchEvent(true);
                     }
+                    return true;
                 }
 
                 break;
@@ -198,12 +188,11 @@ public class SwipeLayout extends FrameLayout {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
 
-                mIsDragging = false;
                 mDragHelper.processTouchEvent(ev);
                 break;
         }
 
-        return mIsDragging;
+        return false;
     }
 
 
@@ -289,8 +278,9 @@ public class SwipeLayout extends FrameLayout {
             } else if (mDraggingProxy.getDragDirection() == SwipeViewLayouter.DragDirection.HORIZONTAL) {
 
                 SwipeResult swipeResult = new SwipeResult(xBeforeDrag);
+                boolean isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector.getDifX());
 
-                if (!mSwipeDirectionDetector.isHorizontalScrollChangedWhileDragging()) {
+                if (!mSwipeDirectionDetector.isHorizontalScrollChangedWhileDragging() && !isClick) {
                     swipeResult = mDraggingProxy.determineSwipeHorizontalState(xvel, mSwipeDirectionDetector, mSwipeState, mSwipeListener, releasedChild);
                 }
 

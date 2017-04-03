@@ -6,10 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import kaufland.com.demo.R;
 import kaufland.com.demo.example.RecylerViewWithRestoreFragment.OnListFragmentInteractionListener;
 import kaufland.com.demo.example.dummy.DummyContent.DummyItem;
+import kaufland.com.swipelibrary.SurfaceView;
 import kaufland.com.swipelibrary.SwipeLayout;
 import kaufland.com.swipelibrary.SwipeState;
 
@@ -62,6 +64,13 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
             }
         });
+
+        holder.mSurfaceView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(holder.mSwipeLayout.getContext(), "Clicked SwipeLayout", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -72,10 +81,12 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         SwipeLayout mSwipeLayout;
+        SurfaceView mSurfaceView;
 
         public ViewHolder(View view) {
             super(view);
             mSwipeLayout = (SwipeLayout) view.findViewById(R.id.swipe_example_2);
+            mSurfaceView = (SurfaceView) view.findViewById(R.id.surface_view_example2);
         }
 
     }
