@@ -114,9 +114,9 @@ public class DraggingProxy {
 
         if (mSwipeViewLayouter.getDragDirection() == HORIZONTAL) {
             if (diffX > 0) {
-                canSwipe = absDiffX > absDiffY && (isLeftDraggable || state == SwipeState.DragViewState.RIGHT_OPEN || mSwipeViewLayouter.getSurfaceView().getLeft() < 0);
+                canSwipe = absDiffX > absDiffY && (isLeftDraggable || mSwipeViewLayouter.getSurfaceView().getX() < 0);
             } else {
-                canSwipe = absDiffX > absDiffY && (isRightDraggable || state == SwipeState.DragViewState.LEFT_OPEN || mSwipeViewLayouter.getSurfaceView().getLeft() > 0);
+                canSwipe = absDiffX > absDiffY && (isRightDraggable || mSwipeViewLayouter.getSurfaceView().getX() > 0);
             }
 
         }

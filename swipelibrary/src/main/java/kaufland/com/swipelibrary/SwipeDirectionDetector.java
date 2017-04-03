@@ -56,6 +56,14 @@ public class SwipeDirectionDetector {
         return yDown - yUp;
     }
 
+    public int getXDown() {
+        return xDown;
+    }
+
+    public int getYDown() {
+        return yDown;
+    }
+
     public int getSwipeDirection(){
       return   getDifX() > 0 ? SWIPE_DIRECTION_RIGHT : SWIPE_DIRECTION_LEFT;
     }

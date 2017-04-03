@@ -76,6 +76,13 @@ public class EasyExample extends Fragment {
                 mViewById.closeSwipe();
             }
         });
+
+        view.findViewById(R.id.surface_view_example2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
         view.findViewById(R.id.btn_open_left).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

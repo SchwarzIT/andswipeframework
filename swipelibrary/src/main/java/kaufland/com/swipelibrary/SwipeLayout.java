@@ -52,8 +52,6 @@ public class SwipeLayout extends FrameLayout {
 
     private SwipeListener mSwipeListener;
 
-    private boolean mDragAllowed;
-
     private boolean mSwipeEnabled = true;
 
     private float mDragHelperTouchSlop;
@@ -102,15 +100,19 @@ public class SwipeLayout extends FrameLayout {
             case MotionEvent.ACTION_MOVE:
                 mSwipeDirectionDetector.onAction(ev.getX(), ev.getY());
 
-                boolean canSwipe = mDraggingProxy.canSwipe(mSwipeDirectionDetector, mSwipeState.getState());
-
-                mDragAllowed = canSwipe;
 
                 boolean isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector.getDifX());
 
-                if (!isClick && mDragAllowed) {
+                if (!isClick) {
                     getParent().requestDisallowInterceptTouchEvent(true);
-                    mDragHelper.processTouchEvent(ev);
+                    try {
+                        mDragHelper.processTouchEvent(ev);
+                    } catch (IllegalArgumentException e) {
+                        // https://code.google.com/p/android/issues/detail?id=64553
+                        mSwipeDirectionDetector.onAction(mSwipeDirectionDetector.getXDown(), mSwipeDirectionDetector.getYDown());
+                        ev.setAction(MotionEvent.ACTION_UP);
+                        mDragHelper.processTouchEvent(ev);
+                    }
                 }
 
                 break;
@@ -128,9 +130,9 @@ public class SwipeLayout extends FrameLayout {
                     return true;
                 }
 
-                if (mDragAllowed) {
-                    mDragHelper.processTouchEvent(ev);
-                }
+
+                mDragHelper.processTouchEvent(ev);
+
 
                 break;
 
@@ -166,13 +168,18 @@ public class SwipeLayout extends FrameLayout {
 
             case MotionEvent.ACTION_MOVE:
                 mSwipeDirectionDetector.onAction(ev.getX(), ev.getY());
-                try {
-                    mDragHelper.processTouchEvent(ev);
-                } catch (IllegalArgumentException e) {
-                    // https://code.google.com/p/android/issues/detail?id=64553
-                }
 
                 boolean isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector.getDifX());
+                if (!isClick) {
+                    try {
+                        mDragHelper.processTouchEvent(ev);
+                    } catch (IllegalArgumentException e) {
+                        // https://code.google.com/p/android/issues/detail?id=64553
+                        mSwipeDirectionDetector.onAction(mSwipeDirectionDetector.getXDown(), mSwipeDirectionDetector.getYDown());
+                        ev.setAction(MotionEvent.ACTION_UP);
+                        mDragHelper.processTouchEvent(ev);
+                    }
+                }
 
 
                 if (!isClick) {
@@ -312,6 +319,7 @@ public class SwipeLayout extends FrameLayout {
         public int clampViewPositionHorizontal(View child, int left, int dx) {
             if (mSwipeState.getState() == SwipeState.DragViewState.TOP_OPEN ||
                     mSwipeState.getState() == SwipeState.DragViewState.BOTTOM_OPEN ||
+                    !mDraggingProxy.canSwipe(mSwipeDirectionDetector, mSwipeState.getState()) ||
                     mDraggingProxy.getDragDirection() == SwipeViewLayouter.DragDirection.VERTICAL) {
                 return 0;
             }
