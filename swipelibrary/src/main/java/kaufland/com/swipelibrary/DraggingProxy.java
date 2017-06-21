@@ -24,6 +24,9 @@ public class DraggingProxy {
     @Bean
     protected SwipeViewLayouter mSwipeViewLayouter;
 
+    @Bean
+    protected LayoutCache mLayoutCache;
+
     private boolean isInitilized;
 
 
@@ -136,4 +139,11 @@ public class DraggingProxy {
        return mSwipeViewLayouter.getViewEngines().get(dragView).getOpenOffset();
     }
 
+    public void captureChildrenBound() {
+        mLayoutCache.captureChildrenBound(mSwipeViewLayouter.getViews().values());
+    }
+
+    public void restoreChildrenBound() {
+        mLayoutCache.restoreOnLayout();
+    }
 }

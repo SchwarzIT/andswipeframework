@@ -1,5 +1,6 @@
 package kaufland.com.demo.example;
 
+import android.inputmethodservice.Keyboard;
 import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
