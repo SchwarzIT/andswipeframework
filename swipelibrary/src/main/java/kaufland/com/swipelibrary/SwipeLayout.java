@@ -48,9 +48,6 @@ public class SwipeLayout extends FrameLayout {
     @Bean
     protected DraggingProxy mDraggingProxy;
 
-    @Bean
-    protected LayoutCache mLayoutCache;
-
     private KDragViewHelper mDragHelper;
 
     private SwipeListener mSwipeListener;
