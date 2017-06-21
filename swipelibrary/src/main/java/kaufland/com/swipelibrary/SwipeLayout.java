@@ -48,6 +48,9 @@ public class SwipeLayout extends FrameLayout {
     @Bean
     protected DraggingProxy mDraggingProxy;
 
+    @Bean
+    protected LayoutCache mLayoutCache;
+
     private KDragViewHelper mDragHelper;
 
     private SwipeListener mSwipeListener;
@@ -55,7 +58,6 @@ public class SwipeLayout extends FrameLayout {
     private boolean mSwipeEnabled = true;
 
     private float mDragHelperTouchSlop;
-
 
     public interface SwipeListener {
         void onSwipeOpened(SwipeState.DragViewState openedDragView, boolean isFullSwipe);
@@ -247,6 +249,12 @@ public class SwipeLayout extends FrameLayout {
 
     }
 
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        mDraggingProxy.restoreChildrenBound();
+    }
+
     private class SwipeDragViewHelper extends ViewDragHelper.Callback {
 
         private ViewGroup parent;
@@ -264,6 +272,12 @@ public class SwipeLayout extends FrameLayout {
             return mDraggingProxy.isCapturedViewDraggable(child);
         }
 
+        @Override
+        public void onViewDragStateChanged(int state) {
+            if(state == 0){
+                mDraggingProxy.captureChildrenBound();
+            }
+        }
 
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
