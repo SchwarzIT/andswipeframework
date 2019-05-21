@@ -1,31 +1,25 @@
 package kaufland.com.swipelibrary;
 
-import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
 
 import kaufland.com.swipelibrary.dragengine.DraggingEngine;
 
 import static kaufland.com.swipelibrary.SwipeLayout.LEFT_DRAG_VIEW;
 import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_DRAG_VIEW;
 import static kaufland.com.swipelibrary.SwipeLayout.SURFACE_VIEW;
-import static kaufland.com.swipelibrary.SwipeState.DragViewState.LEFT_OPEN;
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
 
 /**
  * Created by sbra0902 on 30.03.17.
  */
-@EBean
+
 public class DraggingProxy {
 
-    @Bean
-    protected SwipeViewLayouter mSwipeViewLayouter;
 
-    @Bean
-    protected LayoutCache mLayoutCache;
+    protected SwipeViewLayouter mSwipeViewLayouter = new SwipeViewLayouter();
+
+    protected LayoutCache mLayoutCache = new LayoutCache();
 
     private boolean isInitilized;
 

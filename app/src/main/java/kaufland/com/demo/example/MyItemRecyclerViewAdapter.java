@@ -1,12 +1,9 @@
 package kaufland.com.demo.example;
 
-import android.inputmethodservice.Keyboard;
-import android.os.Looper;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import kaufland.com.demo.R;
@@ -19,7 +16,6 @@ import kaufland.com.swipelibrary.SwipeState;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Handler;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the

@@ -1,10 +1,5 @@
 package kaufland.com.swipelibrary;
 
-import android.util.Log;
-
-import org.androidannotations.annotations.EBean;
-
-@EBean
 public class SwipeState {
 
     private boolean isOpen;

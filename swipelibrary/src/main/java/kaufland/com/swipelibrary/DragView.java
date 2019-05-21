@@ -2,21 +2,10 @@ package kaufland.com.swipelibrary;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import org.androidannotations.annotations.EViewGroup;
 
-import static kaufland.com.swipelibrary.SwipeLayout.BOTTOM_DRAG_VIEW;
-import static kaufland.com.swipelibrary.SwipeLayout.LEFT_DRAG_VIEW;
-import static kaufland.com.swipelibrary.SwipeLayout.RIGHT_DRAG_VIEW;
-import static kaufland.com.swipelibrary.SwipeLayout.TOP_DRAG_VIEW;
-
-@EViewGroup
 public class DragView extends LinearLayout {
 
     private int mSettlePointResourceId;
@@ -29,17 +18,16 @@ public class DragView extends LinearLayout {
 
     private boolean mBouncePossible;
 
-    DragView(Context context) {
+    public DragView(Context context) {
         super(context);
-
     }
 
-    DragView(Context context, AttributeSet attrs) {
+    public DragView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initStyleable(context, attrs);
     }
 
-    DragView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public DragView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initStyleable(context, attrs);
     }

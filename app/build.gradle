@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 28
     buildToolsVersion "${androidBuildToolsVersion}"
     defaultConfig {
         applicationId "kaufland.com.demo"
         minSdkVersion 17
-        targetSdkVersion 24
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -20,15 +20,15 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile project(path: ':swipelibrary')
-    compile "com.android.support:appcompat-v7:${androidSupportVersion}"
-    compile "com.android.support:design:${androidSupportVersion}"
-    compile "com.android.support:support-v4:${androidSupportVersion}"
-    compile "com.android.support:recyclerview-v7:${androidSupportVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
-    testCompile "junit:junit:${jUnitVersion}"
+    implementation project(path: ':swipelibrary')
+    implementation "androidx.appcompat:appcompat:${androidSupportVersion}"
+    implementation "com.google.android.material:material:${androidSupportVersion}"
+    implementation "androidx.legacy:legacy-support-v4:${androidSupportVersion}"
+    implementation "androidx.recyclerview:recyclerview:${androidSupportVersion}"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+    testImplementation "junit:junit:${jUnitVersion}"
 }

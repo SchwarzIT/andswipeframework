@@ -1,10 +1,7 @@
 package kaufland.com.swipelibrary;
 
-import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.androidannotations.annotations.EBean;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;
@@ -22,7 +19,6 @@ import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONT
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL;
 
 
-@EBean
 public class SwipeViewLayouter {
 
     private Map<Integer, DraggingEngine> mViewEngines = new HashMap<>();

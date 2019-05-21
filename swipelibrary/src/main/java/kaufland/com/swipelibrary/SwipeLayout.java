@@ -2,21 +2,18 @@ package kaufland.com.swipelibrary;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ViewDragHelper;
+
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewCompat;
+import androidx.customview.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EViewGroup;
+
 
 import java.security.InvalidParameterException;
 
@@ -26,7 +23,7 @@ import static kaufland.com.swipelibrary.SwipeState.DragViewState.RIGHT_OPEN;
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL;
 import static kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL;
 
-@EViewGroup
+
 public class SwipeLayout extends FrameLayout {
 
     private static final int SWIPE_CLOSING_POINT = 0;
@@ -39,14 +36,11 @@ public class SwipeLayout extends FrameLayout {
 
     private static final String TAG = SwipeLayout.class.getSimpleName();
 
-    @Bean
-    protected SwipeState mSwipeState;
+    protected SwipeState mSwipeState = new SwipeState();
 
-    @Bean
-    protected SwipeDirectionDetector mSwipeDirectionDetector;
+    protected SwipeDirectionDetector mSwipeDirectionDetector = new SwipeDirectionDetector();
 
-    @Bean
-    protected DraggingProxy mDraggingProxy;
+    protected DraggingProxy mDraggingProxy = new DraggingProxy();
 
     private KDragViewHelper mDragHelper;
 

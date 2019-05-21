@@ -3,8 +3,6 @@ package kaufland.com.swipelibrary;
 import android.graphics.PointF;
 import android.view.View;
 
-import org.androidannotations.annotations.EBean;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +10,6 @@ import java.util.Map;
 /**
  * Created by sbra0902 on 21.06.17.
  */
-@EBean
 public class LayoutCache {
 
 

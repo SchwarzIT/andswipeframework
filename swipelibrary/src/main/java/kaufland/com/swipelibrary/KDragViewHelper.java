@@ -1,11 +1,11 @@
 package kaufland.com.swipelibrary;
 
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.VelocityTrackerCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ScrollerCompat;
-import android.support.v4.widget.ViewDragHelper;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.VelocityTrackerCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.ScrollerCompat;
+import androidx.customview.widget.ViewDragHelper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -117,7 +117,7 @@ public class KDragViewHelper {
 
         private ScrollerCompat mScroller;
 
-        private final android.support.v4.widget.ViewDragHelper.Callback mCallback;
+        private final ViewDragHelper.Callback mCallback;
 
         private View mCapturedView;
         private boolean mReleaseInProgress;
@@ -150,7 +150,7 @@ public class KDragViewHelper {
          * @param cb Callback to provide information and receive events
          * @return a new ViewDragHelper instance
          */
-        public static KDragViewHelper create(ViewGroup forParent, android.support.v4.widget.ViewDragHelper.Callback cb) {
+        public static KDragViewHelper create(ViewGroup forParent, ViewDragHelper.Callback cb) {
             return new KDragViewHelper(forParent.getContext(), forParent, cb);
         }
 
@@ -163,7 +163,7 @@ public class KDragViewHelper {
          * @param cb Callback to provide information and receive events
          * @return a new ViewDragHelper instance
          */
-        public static KDragViewHelper create(ViewGroup forParent, float sensitivity, android.support.v4.widget.ViewDragHelper.Callback cb) {
+        public static KDragViewHelper create(ViewGroup forParent, float sensitivity, ViewDragHelper.Callback cb) {
             final KDragViewHelper helper = create(forParent, cb);
             helper.mTouchSlop = (int) (helper.mTouchSlop * (1 / sensitivity));
             return helper;
@@ -177,7 +177,7 @@ public class KDragViewHelper {
          * @param context Context to initialize config-dependent params from
          * @param forParent Parent view to monitor
          */
-        private KDragViewHelper(Context context, ViewGroup forParent, android.support.v4.widget.ViewDragHelper.Callback cb) {
+        private KDragViewHelper(Context context, ViewGroup forParent, ViewDragHelper.Callback cb) {
             if (forParent == null) {
                 throw new IllegalArgumentException("Parent view may not be null");
             }
@@ -230,8 +230,8 @@ public class KDragViewHelper {
 
         /**
          * Enable edge tracking for the selected edges of the parent view.
-         * The callback's {@link android.support.v4.widget.ViewDragHelper.Callback#onEdgeTouched(int, int)} and
-         * {@link android.support.v4.widget.ViewDragHelper.Callback#onEdgeDragStarted(int, int)} methods will only be invoked
+         * The callback's {@link ViewDragHelper.Callback#onEdgeTouched(int, int)} and
+         * {@link ViewDragHelper.Callback#onEdgeDragStarted(int, int)} methods will only be invoked
          * for edges for which edge tracking has been enabled.
          *
          * @param edgeFlags Combination of edge flags describing the edges to watch
@@ -257,7 +257,7 @@ public class KDragViewHelper {
 
         /**
          * Capture a specific child view for dragging within the parent. The callback will be notified
-         * but {@link android.support.v4.widget.ViewDragHelper.Callback#tryCaptureView(android.view.View, int)} will not be asked permission to
+         * but {@link ViewDragHelper.Callback#tryCaptureView(android.view.View, int)} will not be asked permission to
          * capture this view.
          *
          * @param childView Child view to capture
@@ -1273,7 +1273,7 @@ public class KDragViewHelper {
 
         /**
          * Find the topmost child under the given point within the parent view's coordinate system.
-         * The child order is determined using {@link android.support.v4.widget.ViewDragHelper.Callback#getOrderedChildIndex(int)}.
+         * The child order is determined using {@link ViewDragHelper.Callback#getOrderedChildIndex(int)}.
          *
          * @param x X position to test in the parent's coordinate system
          * @param y Y position to test in the parent's coordinate system

@@ -3,14 +3,15 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     ext {
-        androidSupportVersion = '25.0.1'
-        androidBuildToolsVersion = '25.0.1'
+        androidSupportVersion = '1.0.0-beta01'
+        androidBuildToolsVersion = '28.0.3'
         jUnitVersion = '4.12'
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:3.3.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -20,6 +21,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        google()
     }
 }
 
