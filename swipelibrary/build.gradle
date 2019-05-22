@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
 apply plugin: 'pmd'
@@ -78,4 +80,8 @@ dependencies {
     })
     implementation "androidx.appcompat:appcompat:${androidSupportVersion}"
     testImplementation 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
