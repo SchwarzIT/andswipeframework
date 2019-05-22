@@ -54,13 +54,13 @@ class SwipeViewLayouter {
 
             val child = parent.getChildAt(i)
 
-            if (child is DragView) {
-                mViews[child.viewPosition] = child
-                dragDirection = if (child.viewPosition <= 2) HORIZONTAL else VERTICAL
-            } else if (child is SurfaceView) {
-                mViews[SwipeLayout.SURFACE_VIEW] = child
-            } else {
-                throw InvalidParameterException("Only DragView or SurfaceView are supported members of SwipeLayout")
+            when (child) {
+                is DragView -> {
+                    mViews[child.viewPosition] = child
+                    dragDirection = if (child.viewPosition <= 2) HORIZONTAL else VERTICAL
+                }
+                is SurfaceView -> mViews[SwipeLayout.SURFACE_VIEW] = child
+                else -> throw InvalidParameterException("Only DragView or SurfaceView are supported members of SwipeLayout")
             }
         }
 

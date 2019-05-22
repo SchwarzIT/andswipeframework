@@ -26,11 +26,11 @@ import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL
 class SwipeLayout : FrameLayout {
 
     var swipeState = SwipeState()
-        protected set
+        private set
 
-    protected var mSwipeDirectionDetector = SwipeDirectionDetector()
+    private var mSwipeDirectionDetector = SwipeDirectionDetector()
 
-    protected var mDraggingProxy = DraggingProxy()
+    private var mDraggingProxy = DraggingProxy()
 
     private var mDragHelper: KDragViewHelper? = null
 
