@@ -2,7 +2,7 @@ package kaufland.com.demo.example;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,13 +86,13 @@ public class EasyExample extends Fragment {
         view.findViewById(R.id.btn_open_left).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewById.openSwipe(SwipeLayout.LEFT_DRAG_VIEW);
+                mViewById.openSwipe(SwipeLayout.Companion.getLEFT_DRAG_VIEW());
             }
         });
         view.findViewById(R.id.btn_open_right).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewById.openSwipe(SwipeLayout.RIGHT_DRAG_VIEW);
+                mViewById.openSwipe(SwipeLayout.Companion.getRIGHT_DRAG_VIEW());
             }
         });
         view.findViewById(R.id.btn_disable_left_drag).setOnClickListener(new View.OnClickListener() {
