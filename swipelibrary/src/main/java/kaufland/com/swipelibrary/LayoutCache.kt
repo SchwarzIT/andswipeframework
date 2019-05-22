@@ -10,7 +10,7 @@ import java.util.HashMap
 class LayoutCache {
 
 
-    internal var mLayoutCache: MutableMap<View, PointF> = HashMap()
+    private var mLayoutCache: MutableMap<View, PointF> = HashMap()
 
 
     fun restoreOnLayout() {
