@@ -1,12 +1,13 @@
 apply plugin: 'com.android.library'
-apply plugin: 'android-apt'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "${androidBuildToolsVersion}"
 
     defaultConfig {
         minSdkVersion 17
@@ -52,10 +53,10 @@ buildscript {
     }
 }
 
-apt {
+kapt {
     arguments {
-        library 'true'
-        androidManifestFile variant.outputs[0]?.processResources?.manifestFile
+        arg("library", "true")
+//        androidManifestFile variant.outputs[0]?.processResources?.manifestFile //TODO Remove with Android anotations
     }
 }
 
@@ -80,12 +81,18 @@ task jacocoTestReport(type: JacocoReport, dependsOn: 'testDebugUnitTest', group:
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "com.android.support:appcompat-v7:${androidSupportVersion}"
-    apt "org.androidannotations:androidannotations:4.2.0"
-    compile 'org.androidannotations:androidannotations-api:4.2.0'
-    testCompile 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:${androidSupportVersion}"
+    annotationProcessor "org.androidannotations:androidannotations:4.2.0"
+    implementation 'org.androidannotations:androidannotations-api:4.2.0'
+    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.dagger:dagger:2.0'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.0'
+}
+repositories {
+    mavenCentral()
 }
