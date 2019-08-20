@@ -11,9 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 
-import org.androidannotations.annotations.Bean
-import org.androidannotations.annotations.EViewGroup
-
 import java.security.InvalidParameterException
 
 import kaufland.com.swipelibrary.SwipeState.DragViewState.CLOSED
@@ -22,18 +19,14 @@ import kaufland.com.swipelibrary.SwipeState.DragViewState.RIGHT_OPEN
 import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL
 import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL
 
-@EViewGroup
 class SwipeLayout : FrameLayout {
 
-    @Bean
     var swipeState: SwipeState? = null
         protected set
 
-    @Bean
     protected var mSwipeDirectionDetector: SwipeDirectionDetector? = null
 
-    @Bean
-    protected var mDraggingProxy: DraggingProxy? = null
+    protected var mDraggingProxy: DraggingProxy = DraggingProxy()
 
     private var mDragHelper: KDragViewHelper? = null
 
@@ -218,7 +211,7 @@ class SwipeLayout : FrameLayout {
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        mDraggingProxy!!.restoreChildrenBound()
+        mDraggingProxy.restoreChildrenBound()
     }
 
     private inner class SwipeDragViewHelper internal constructor(private val parent: ViewGroup) : ViewDragHelper.Callback() {
@@ -228,39 +221,39 @@ class SwipeLayout : FrameLayout {
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
 
             xBeforeDrag = child.x.toInt()
-            return mDraggingProxy!!.isCapturedViewDraggable(child)
+            return mDraggingProxy.isCapturedViewDraggable(child)
         }
 
         override fun onViewDragStateChanged(state: Int) {
             if (state == 0) {
-                mDraggingProxy!!.captureChildrenBound()
+                mDraggingProxy.captureChildrenBound()
             }
         }
 
         override fun onViewPositionChanged(changedView: View?, left: Int, top: Int, dx: Int, dy: Int) {
 
-            if (mDraggingProxy!!.dragDirection == HORIZONTAL) {
+            if (mDraggingProxy.dragDirection == HORIZONTAL) {
 
                 if (changedView != null) {
-                    mDraggingProxy!!.moveView(changedView, left)
+                    mDraggingProxy.moveView(changedView, left)
                 }
 
-            } else if (mDraggingProxy!!.dragDirection == VERTICAL) {
+            } else if (mDraggingProxy.dragDirection == VERTICAL) {
                 throw InvalidParameterException("VerticalSwipeNotImplemented")
             }
         }
 
         override fun onViewReleased(releasedChild: View?, xvel: Float, yvel: Float) {
 
-            if (mDraggingProxy!!.dragDirection == VERTICAL) {
+            if (mDraggingProxy.dragDirection == VERTICAL) {
                 throw InvalidParameterException("VerticalSwipeNotImplemented")
-            } else if (mDraggingProxy!!.dragDirection == HORIZONTAL) {
+            } else if (mDraggingProxy.dragDirection == HORIZONTAL) {
 
                 var swipeResult = SwipeResult(xBeforeDrag)
                 val isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector!!.difX)
 
                 if (!mSwipeDirectionDetector!!.isHorizontalScrollChangedWhileDragging && !isClick) {
-                    swipeResult = mDraggingProxy!!.determineSwipeHorizontalState(xvel, mSwipeDirectionDetector!!, swipeState!!, mSwipeListener!!, releasedChild!!)
+                    swipeResult = mDraggingProxy.determineSwipeHorizontalState(xvel, mSwipeDirectionDetector!!, swipeState!!, mSwipeListener!!, releasedChild!!)
                 }
 
                 if (mDragHelper!!.smoothSlideViewTo(releasedChild!!, swipeResult.settleX, 0)) {
@@ -268,7 +261,7 @@ class SwipeLayout : FrameLayout {
 
                 }
 
-                mDraggingProxy!!.requestLayout()
+                mDraggingProxy.requestLayout()
 
                 if (mSwipeListener != null) {
                     swipeResult.notifyListener?.run()
@@ -277,16 +270,16 @@ class SwipeLayout : FrameLayout {
         }
 
         override fun clampViewPositionVertical(child: View?, top: Int, dy: Int): Int {
-            return if (swipeState!!.state == LEFT_OPEN || swipeState!!.state == RIGHT_OPEN || mDraggingProxy!!.dragDirection == HORIZONTAL) {
+            return if (swipeState!!.state == LEFT_OPEN || swipeState!!.state == RIGHT_OPEN || mDraggingProxy.dragDirection == HORIZONTAL) {
                 0
             } else 0
 
         }
 
         override fun clampViewPositionHorizontal(child: View?, left: Int, dx: Int): Int {
-            return if (swipeState!!.state == SwipeState.DragViewState.TOP_OPEN || swipeState!!.state == SwipeState.DragViewState.BOTTOM_OPEN || !mDraggingProxy!!.canSwipe(mSwipeDirectionDetector!!, swipeState!!.state) || mDraggingProxy!!.dragDirection == VERTICAL) {
+            return if (swipeState!!.state == SwipeState.DragViewState.TOP_OPEN || swipeState!!.state == SwipeState.DragViewState.BOTTOM_OPEN || !mDraggingProxy.canSwipe(mSwipeDirectionDetector!!, swipeState!!.state) || mDraggingProxy.dragDirection == VERTICAL) {
                 0
-            } else mDraggingProxy!!.clampViewPositionHorizontal(child!!, left)
+            } else mDraggingProxy.clampViewPositionHorizontal(child!!, left)
 
         }
 
@@ -310,13 +303,13 @@ class SwipeLayout : FrameLayout {
 
     fun closeSwipeNoAnimation() {
         swipeState!!.state = CLOSED
-        mDraggingProxy!!.restoreState(swipeState!!.state)
+        mDraggingProxy.restoreState(swipeState!!.state)
     }
 
     @JvmOverloads
     fun openSwipe(position: Int, notifyCallback: Boolean = true) {
 
-        val mSurfaceOpenOffsetByDragView = mDraggingProxy!!.getSurfaceOpenOffsetByDragView(position)
+        val mSurfaceOpenOffsetByDragView = mDraggingProxy.getSurfaceOpenOffsetByDragView(position)
 
         when (position) {
             LEFT_DRAG_VIEW -> {

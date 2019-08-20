@@ -1,14 +1,11 @@
 package kaufland.com.swipelibrary
 
 import android.graphics.Rect
-import android.view.ViewTreeObserver
 
-import org.androidannotations.annotations.EBean
 
 /**
  * Created by sbra0902 on 29.03.17.
  */
-@EBean
 class SwipeDirectionDetector {
 
     var xDown: Int = 0

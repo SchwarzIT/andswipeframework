@@ -1,27 +1,20 @@
 package kaufland.com.swipelibrary
 
-import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import kaufland.com.swipelibrary.SwipeLayout.Companion.LEFT_DRAG_VIEW
 import kaufland.com.swipelibrary.SwipeLayout.Companion.RIGHT_DRAG_VIEW
 import kaufland.com.swipelibrary.SwipeLayout.Companion.SURFACE_VIEW
-
-import org.androidannotations.annotations.EBean
-
 import java.security.InvalidParameterException
 import java.util.HashMap
-
 import kaufland.com.swipelibrary.dragengine.DraggingEngine
 import kaufland.com.swipelibrary.dragengine.LeftDragViewEngine
 import kaufland.com.swipelibrary.dragengine.RightDragViewEngine
 import kaufland.com.swipelibrary.dragengine.SurfaceViewEngine
-
 import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL
 import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL
 
 
-@EBean
 class SwipeViewLayouter {
 
     private val mViewEngines = HashMap<Int, DraggingEngine<*>>()

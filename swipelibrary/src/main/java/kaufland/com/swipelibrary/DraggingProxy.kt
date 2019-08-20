@@ -6,22 +6,16 @@ import kaufland.com.swipelibrary.SwipeLayout.Companion.LEFT_DRAG_VIEW
 import kaufland.com.swipelibrary.SwipeLayout.Companion.RIGHT_DRAG_VIEW
 import kaufland.com.swipelibrary.SwipeLayout.Companion.SURFACE_VIEW
 
-import org.androidannotations.annotations.Bean
-import org.androidannotations.annotations.EBean
-
 
 import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL
 
 /**
  * Created by sbra0902 on 30.03.17.
  */
-@EBean
 class DraggingProxy {
 
-    @Bean
     protected var mSwipeViewLayouter: SwipeViewLayouter? = null
 
-    @Bean
     protected var mLayoutCache: LayoutCache? = null
 
     var isInitilized: Boolean = false

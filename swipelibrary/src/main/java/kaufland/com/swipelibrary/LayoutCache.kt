@@ -3,13 +3,11 @@ package kaufland.com.swipelibrary
 import android.graphics.PointF
 import android.view.View
 
-import org.androidannotations.annotations.EBean
 import java.util.HashMap
 
 /**
  * Created by sbra0902 on 21.06.17.
  */
-@EBean
 class LayoutCache {
 
 

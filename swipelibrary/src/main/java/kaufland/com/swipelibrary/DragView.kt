@@ -4,9 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 
-import org.androidannotations.annotations.EViewGroup
-
-@EViewGroup
 class DragView : LinearLayout {
 
     var settlePointResourceId: Int = 0

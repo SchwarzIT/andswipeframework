@@ -60,14 +60,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-        val id = item.itemId
 
-        if (id == R.id.nav_easy_example) {
-            fragmentManager.beginTransaction().replace(R.id.content_main, EasyExample()).commit()
-        } else if (id == R.id.nav_recycler_with_restore) {
-            fragmentManager.beginTransaction().replace(R.id.content_main, RecylerViewWithRestoreFragment()).commit()
-        } else if (id == R.id.nav_share) {
+        when (item.itemId) {
+            R.id.nav_easy_example -> fragmentManager.beginTransaction().replace(R.id.content_main, EasyExample()).commit()
+            R.id.nav_recycler_with_restore -> fragmentManager.beginTransaction().replace(R.id.content_main, RecylerViewWithRestoreFragment()).commit()
+            R.id.nav_share -> {
 
+            }
         }
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
