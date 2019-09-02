@@ -57,8 +57,8 @@ class SwipeDirectionDetector {
 
     companion object {
 
-        val SWIPE_DIRECTION_LEFT = 1
+        const val SWIPE_DIRECTION_LEFT = 1
 
-        val SWIPE_DIRECTION_RIGHT = 2
+        const val SWIPE_DIRECTION_RIGHT = 2
     }
 }

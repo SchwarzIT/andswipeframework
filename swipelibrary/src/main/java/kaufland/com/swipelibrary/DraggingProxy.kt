@@ -8,17 +8,18 @@ import kaufland.com.swipelibrary.SwipeLayout.Companion.SURFACE_VIEW
 
 
 import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL
+import kotlin.math.abs
 
 /**
  * Created by sbra0902 on 30.03.17.
  */
 class DraggingProxy {
 
-    protected var mSwipeViewLayouter: SwipeViewLayouter? = null
+    private var mSwipeViewLayouter: SwipeViewLayouter? = null
 
-    protected var mLayoutCache: LayoutCache? = null
+    private var mLayoutCache: LayoutCache? = null
 
-    var isInitilized: Boolean = false
+    var isInitialized: Boolean = false
         private set
 
     val dragDirection: SwipeViewLayouter.DragDirection
@@ -29,7 +30,7 @@ class DraggingProxy {
 
 
     fun init(parent: ViewGroup) {
-        isInitilized = true
+        isInitialized = true
         mSwipeViewLayouter!!.init(parent)
         initInitialPosition()
     }
@@ -63,7 +64,7 @@ class DraggingProxy {
         return SwipeResult(0)
     }
 
-    fun initInitialPosition() {
+    private fun initInitialPosition() {
 
         for (dragView in mSwipeViewLayouter!!.viewEngines.values) {
             dragView.initializePosition(mSwipeViewLayouter!!.dragDirection)
@@ -98,31 +99,29 @@ class DraggingProxy {
         return draggable
     }
 
-    fun canSwipe(swipeDirectionDetector: SwipeDirectionDetector, state: SwipeState.DragViewState): Boolean {
+    fun canSwipe(swipeDirectionDetector: SwipeDirectionDetector): Boolean {
 
         var canSwipe = false
 
-        val absDiffX = Math.abs(swipeDirectionDetector.difX).toFloat()
-        val absDiffY = Math.abs(swipeDirectionDetector.difY).toFloat()
+        val absDiffX = abs(swipeDirectionDetector.difX).toFloat()
+        val absDiffY = abs(swipeDirectionDetector.difY).toFloat()
         val diffX = swipeDirectionDetector.difX.toFloat()
-        val diffY = swipeDirectionDetector.difY.toFloat()
         val isLeftDraggable = (mSwipeViewLayouter!!.views[LEFT_DRAG_VIEW] as DragView).isDraggable
         val isRightDraggable = (mSwipeViewLayouter!!.views[RIGHT_DRAG_VIEW] as DragView).isDraggable
 
         if (mSwipeViewLayouter!!.dragDirection == HORIZONTAL) {
-            if (diffX > 0) {
-                canSwipe = absDiffX > absDiffY && (isLeftDraggable || mSwipeViewLayouter!!.surfaceView.x < 0)
+            canSwipe = if (diffX > 0) {
+                absDiffX > absDiffY && (isLeftDraggable || mSwipeViewLayouter!!.surfaceView.x < 0)
             } else {
-                canSwipe = absDiffX > absDiffY && (isRightDraggable || mSwipeViewLayouter!!.surfaceView.x > 0)
+                absDiffX > absDiffY && (isRightDraggable || mSwipeViewLayouter!!.surfaceView.x > 0)
             }
-
         }
 
         return canSwipe
     }
 
     fun getSurfaceOpenOffsetByDragView(dragView: Int): Int {
-        return mSwipeViewLayouter!!.viewEngines[dragView]!!.openOffset
+        return mSwipeViewLayouter!!.viewEngines.getValue(dragView).openOffset
     }
 
     fun captureChildrenBound() {

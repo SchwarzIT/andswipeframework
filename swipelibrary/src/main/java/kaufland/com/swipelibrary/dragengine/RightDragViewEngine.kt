@@ -13,6 +13,7 @@ import kaufland.com.swipelibrary.SwipeViewLayouter
 
 import kaufland.com.swipelibrary.SwipeState.DragViewState.CLOSED
 import kaufland.com.swipelibrary.SwipeState.DragViewState.RIGHT_OPEN
+import kotlin.math.abs
 
 /**
  * Created by sbra0902 on 29.03.17.
@@ -27,7 +28,7 @@ class RightDragViewEngine(private val mLayouter: SwipeViewLayouter) : DraggingEn
 
     override var dragDistance: Int = 0
 
-    override var intermmediateDistance: Int = 0
+    override var intermediateDistance: Int = 0
 
     override val openOffset: Int
         get() = -dragDistance
@@ -45,7 +46,7 @@ class RightDragViewEngine(private val mLayouter: SwipeViewLayouter) : DraggingEn
         mSurfaceView = mLayouter.surfaceView
         dragDistance = dragView!!.width
         mInitialXPos = (mSurfaceView!!.x + mSurfaceView!!.width).toInt()
-        intermmediateDistance = if (dragView!!.settlePointResourceId != -1) dragView!!.findViewById(dragView!!.settlePointResourceId).right else dragView!!.width
+        intermediateDistance = if (dragView!!.settlePointResourceId != -1) dragView!!.findViewById(dragView!!.settlePointResourceId).right else dragView!!.width
 
         moveToInitial()
     }
@@ -77,8 +78,8 @@ class RightDragViewEngine(private val mLayouter: SwipeViewLayouter) : DraggingEn
     }
 
     override fun determineSwipeHorizontalState(velocity: Float, swipeDirectionDetector: SwipeDirectionDetector, swipeState: SwipeState, swipeListener: SwipeLayout.SwipeListener, releasedChild: View): SwipeResult? {
-        if (releasedChild == dragView && swipeDirectionDetector.swipeDirection == SWIPE_DIRECTION_RIGHT && Math.abs(swipeDirectionDetector.difX) > dragDistance / 2) {
-            swipeState.state = SwipeState.DragViewState.CLOSED
+        if (releasedChild == dragView && swipeDirectionDetector.swipeDirection == SWIPE_DIRECTION_RIGHT && abs(swipeDirectionDetector.difX) > dragDistance / 2) {
+            swipeState.state = CLOSED
             return SwipeResult(mSurfaceView!!.width, Runnable { swipeListener.onSwipeClosed(CLOSED) })
         } else if (releasedChild == dragView) {
             swipeState.state = RIGHT_OPEN

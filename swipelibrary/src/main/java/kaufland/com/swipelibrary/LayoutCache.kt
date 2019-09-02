@@ -10,9 +10,7 @@ import java.util.HashMap
  */
 class LayoutCache {
 
-
-    internal var mLayoutCache: MutableMap<View, PointF> = HashMap()
-
+    private var mLayoutCache: MutableMap<View, PointF> = HashMap()
 
     fun restoreOnLayout() {
 
@@ -24,11 +22,8 @@ class LayoutCache {
                 child.x = restorePoint.x
                 child.y = restorePoint.y
             }
-
         }
-
     }
-
 
     fun captureChildrenBound(views: Collection<View>) {
 

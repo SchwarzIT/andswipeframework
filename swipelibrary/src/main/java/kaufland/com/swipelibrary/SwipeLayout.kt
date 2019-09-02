@@ -18,21 +18,22 @@ import kaufland.com.swipelibrary.SwipeState.DragViewState.LEFT_OPEN
 import kaufland.com.swipelibrary.SwipeState.DragViewState.RIGHT_OPEN
 import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.HORIZONTAL
 import kaufland.com.swipelibrary.SwipeViewLayouter.DragDirection.VERTICAL
+import kotlin.math.abs
 
 class SwipeLayout : FrameLayout {
 
     var swipeState: SwipeState? = null
-        protected set
+        private set
 
-    protected var mSwipeDirectionDetector: SwipeDirectionDetector? = null
+    private var mSwipeDirectionDetector: SwipeDirectionDetector? = null
 
-    protected var mDraggingProxy: DraggingProxy = DraggingProxy()
+    private var mDraggingProxy: DraggingProxy = DraggingProxy()
 
     private var mDragHelper: KDragViewHelper? = null
 
     private var mSwipeListener: SwipeListener? = null
 
-    var swipeEnabled = true
+    private var swipeEnabled = true
 
     private var mDragHelperTouchSlop: Float = 0.toFloat()
 
@@ -47,7 +48,7 @@ class SwipeLayout : FrameLayout {
         fun onBounce(dragViewState: SwipeState.DragViewState)
     }
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         initSwipe()
@@ -58,15 +59,11 @@ class SwipeLayout : FrameLayout {
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-
-
         if (!swipeEnabled) {
             return false
         }
 
-        val action = ev.action
-
-        when (action) {
+        when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
 
                 mDragHelper!!.abort()
@@ -78,7 +75,7 @@ class SwipeLayout : FrameLayout {
                 mSwipeDirectionDetector!!.onAction(ev.x, ev.y)
 
 
-                val isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector!!.difX)
+                val isClick = mDragHelperTouchSlop > abs(mSwipeDirectionDetector!!.difX)
 
                 if (!isClick) {
                     parent.requestDisallowInterceptTouchEvent(true)
@@ -128,9 +125,7 @@ class SwipeLayout : FrameLayout {
             return false
         }
 
-        val action = MotionEventCompat.getActionMasked(ev)
-
-        when (action) {
+        when (MotionEventCompat.getActionMasked(ev)) {
             MotionEvent.ACTION_DOWN -> {
                 mSwipeDirectionDetector!!.onActionDown(ev.x, ev.y, this)
                 mDragHelper!!.abort()
@@ -140,7 +135,7 @@ class SwipeLayout : FrameLayout {
             MotionEvent.ACTION_MOVE -> {
                 mSwipeDirectionDetector!!.onAction(ev.x, ev.y)
 
-                val isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector!!.difX)
+                val isClick = mDragHelperTouchSlop > abs(mSwipeDirectionDetector!!.difX)
                 if (!isClick) {
                     try {
                         mDragHelper!!.processTouchEvent(ev)
@@ -152,7 +147,6 @@ class SwipeLayout : FrameLayout {
                     }
 
                 }
-
 
                 if (!isClick) {
                     val parent = parent
@@ -170,12 +164,12 @@ class SwipeLayout : FrameLayout {
     }
 
 
-    fun smoothSlideTo(slideOffset: Float) {
+    private fun smoothSlideTo(slideOffset: Float) {
 
-        val leftOffset = if (mDraggingProxy!!.dragDirection == HORIZONTAL) slideOffset.toInt() else 0
-        val topOffset = if (mDraggingProxy!!.dragDirection == VERTICAL) slideOffset.toInt() else 0
+        val leftOffset = if (mDraggingProxy.dragDirection == HORIZONTAL) slideOffset.toInt() else 0
+        val topOffset = if (mDraggingProxy.dragDirection == VERTICAL) slideOffset.toInt() else 0
 
-        if (mDragHelper!!.smoothSlideViewTo(mDraggingProxy!!.surfaceView, leftOffset, topOffset)) {
+        if (mDragHelper!!.smoothSlideViewTo(mDraggingProxy.surfaceView, leftOffset, topOffset)) {
             ViewCompat.postInvalidateOnAnimation(this)
         }
     }
@@ -194,13 +188,13 @@ class SwipeLayout : FrameLayout {
 
         super.dispatchDraw(canvas)
 
-        if (!mDraggingProxy!!.isInitilized) {
-            mDraggingProxy!!.init(this)
+        if (!mDraggingProxy.isInitialized) {
+            mDraggingProxy.init(this)
         }
 
         if (mRestoreOnDraw) {
             post {
-                mDraggingProxy!!.restoreState(swipeState!!.state)
+                mDraggingProxy.restoreState(swipeState!!.state)
                 mRestoreOnDraw = false
             }
 
@@ -250,7 +244,7 @@ class SwipeLayout : FrameLayout {
             } else if (mDraggingProxy.dragDirection == HORIZONTAL) {
 
                 var swipeResult = SwipeResult(xBeforeDrag)
-                val isClick = mDragHelperTouchSlop > Math.abs(mSwipeDirectionDetector!!.difX)
+                val isClick = mDragHelperTouchSlop > abs(mSwipeDirectionDetector!!.difX)
 
                 if (!mSwipeDirectionDetector!!.isHorizontalScrollChangedWhileDragging && !isClick) {
                     swipeResult = mDraggingProxy.determineSwipeHorizontalState(xvel, mSwipeDirectionDetector!!, swipeState!!, mSwipeListener!!, releasedChild!!)
@@ -277,7 +271,7 @@ class SwipeLayout : FrameLayout {
         }
 
         override fun clampViewPositionHorizontal(child: View?, left: Int, dx: Int): Int {
-            return if (swipeState!!.state == SwipeState.DragViewState.TOP_OPEN || swipeState!!.state == SwipeState.DragViewState.BOTTOM_OPEN || !mDraggingProxy.canSwipe(mSwipeDirectionDetector!!, swipeState!!.state) || mDraggingProxy.dragDirection == VERTICAL) {
+            return if (swipeState!!.state == SwipeState.DragViewState.TOP_OPEN || swipeState!!.state == SwipeState.DragViewState.BOTTOM_OPEN || !mDraggingProxy.canSwipe(mSwipeDirectionDetector!!) || mDraggingProxy.dragDirection == VERTICAL) {
                 0
             } else mDraggingProxy.clampViewPositionHorizontal(child!!, left)
 
@@ -299,11 +293,6 @@ class SwipeLayout : FrameLayout {
         if (mDragHelper!!.viewDragState != KDragViewHelper.STATE_IDLE) {
             mDragHelper!!.abort()
         }
-    }
-
-    fun closeSwipeNoAnimation() {
-        swipeState!!.state = CLOSED
-        mDraggingProxy.restoreState(swipeState!!.state)
     }
 
     @JvmOverloads
@@ -336,7 +325,7 @@ class SwipeLayout : FrameLayout {
             LEFT_OPEN, RIGHT_OPEN, SwipeState.DragViewState.TOP_OPEN, SwipeState.DragViewState.BOTTOM_OPEN -> {
                 smoothSlideTo(SWIPE_CLOSING_POINT.toFloat())
                 swipeState!!.state = CLOSED
-            }
+            } else -> {}
         }
     }
 
@@ -357,7 +346,7 @@ class SwipeLayout : FrameLayout {
 
     companion object {
 
-        private val SWIPE_CLOSING_POINT = 0
+        private const val SWIPE_CLOSING_POINT = 0
 
         const val LEFT_DRAG_VIEW = 1
         const val RIGHT_DRAG_VIEW = 2
@@ -365,7 +354,7 @@ class SwipeLayout : FrameLayout {
         const val BOTTOM_DRAG_VIEW = 4
         const val SURFACE_VIEW = 5
 
-        private val TAG = SwipeLayout::class.java.getSimpleName()
+        private val TAG = SwipeLayout::class.java.simpleName
     }
 
 }

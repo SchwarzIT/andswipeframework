@@ -87,7 +87,7 @@
                 android:text="-" />
 
             <TextView
-                android:id="@+id/txt_quantity"
+                android:id="@+id/text_quantity"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
                 android:gravity="center"

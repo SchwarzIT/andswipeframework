@@ -14,8 +14,6 @@ class DragView : LinearLayout {
 
     var isDraggable = true
 
-    internal val isInitialized: Boolean = false
-
     var isBouncePossible: Boolean = false
 
     internal constructor(context: Context) : super(context)

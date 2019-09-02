@@ -12,6 +12,7 @@ import kaufland.com.swipelibrary.SwipeState
 import kaufland.com.swipelibrary.SwipeViewLayouter
 
 import kaufland.com.swipelibrary.SwipeState.DragViewState.CLOSED
+import kotlin.math.abs
 
 /**
  * Created by sbra0902 on 29.03.17.
@@ -29,7 +30,7 @@ class LeftDragViewEngine(private val mLayouter: SwipeViewLayouter) : DraggingEng
 
     override var dragDistance: Int = 0
 
-    override var intermmediateDistance: Int = 0
+    override var intermediateDistance: Int = 0
 
     override fun moveView(offset: Float, view: SurfaceView, changedView: View) {
         if (dragView != changedView) {
@@ -44,7 +45,7 @@ class LeftDragViewEngine(private val mLayouter: SwipeViewLayouter) : DraggingEng
 
         mInitialXPos = (mSurfaceView!!.x - dragView!!.width).toInt()
         dragDistance = dragView!!.width
-        intermmediateDistance = if (dragView!!.settlePointResourceId != -1) dragView!!.findViewById(dragView!!.settlePointResourceId).right else dragView!!.width
+        intermediateDistance = if (dragView!!.settlePointResourceId != -1) dragView!!.findViewById(dragView!!.settlePointResourceId).right else dragView!!.width
 
         moveToInitial()
     }
@@ -82,8 +83,8 @@ class LeftDragViewEngine(private val mLayouter: SwipeViewLayouter) : DraggingEng
     }
 
     override fun determineSwipeHorizontalState(velocity: Float, swipeDirectionDetector: SwipeDirectionDetector, swipeState: SwipeState, swipeListener: SwipeLayout.SwipeListener, releasedChild: View): SwipeResult? {
-        if (dragView == releasedChild && swipeDirectionDetector.swipeDirection == SWIPE_DIRECTION_LEFT && Math.abs(swipeDirectionDetector.difX) > dragDistance / 2) {
-            swipeState.state = SwipeState.DragViewState.CLOSED
+        if (dragView == releasedChild && swipeDirectionDetector.swipeDirection == SWIPE_DIRECTION_LEFT && abs(swipeDirectionDetector.difX) > dragDistance / 2) {
+            swipeState.state = CLOSED
             return SwipeResult(-dragView!!.width, Runnable { swipeListener.onSwipeClosed(CLOSED) })
         }
 

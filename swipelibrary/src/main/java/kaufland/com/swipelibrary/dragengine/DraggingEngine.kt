@@ -15,7 +15,7 @@ interface DraggingEngine<T : View> {
 
     val dragDistance: Int
 
-    val intermmediateDistance: Int
+    val intermediateDistance: Int
 
     val openOffset: Int
 
