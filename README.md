@@ -9,11 +9,11 @@ just another swipe library
 
 Just a small and easy example
 
-![](screenshot/screen1.gif)
+![](screenshots/screen1.gif)
 
 Recyclerview with restore swipe state on rebind
 
-![](screenshot/screen2.gif)
+![](screenshots/screen2.gif)
 
 
 ## Features
