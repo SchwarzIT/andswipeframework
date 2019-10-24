@@ -29,6 +29,6 @@ dependencies {
     compile "com.android.support:design:${androidSupportVersion}"
     compile "com.android.support:support-v4:${androidSupportVersion}"
     compile "com.android.support:recyclerview-v7:${androidSupportVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile "junit:junit:${jUnitVersion}"
 }
